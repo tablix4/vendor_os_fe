@@ -13,6 +13,7 @@ import '../../features/order/presentation/pages/order_details_page.dart';
 import '../../features/order/presentation/pages/order_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../shell/main_shell_page.dart';
+import '../../features/profile/presentation/pages/profile_page.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -133,9 +134,10 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/profile',
               builder: (context, state) {
-                return const Scaffold(
-                  body: Center(child: Text('Profile Coming Soon')),
-                );
+                // return const Scaffold(
+                //   body: Center(child: Text('Profile Coming Soon')),
+                // );
+                return const ProfilePage();
               },
             ),
           ],

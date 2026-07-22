@@ -164,7 +164,12 @@ class DashboardPage extends ConsumerWidget {
                         context.push("/orders");
                       },
 
-                      child: const Text("See All"),
+                      child: const Text(
+                          "See All",
+                        style: TextStyle(
+                        color: Color(0xff16A34A),
+                      ),
+                      ),
                     ),
                   ],
                 ),

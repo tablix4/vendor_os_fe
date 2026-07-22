@@ -192,6 +192,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
 
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color(0xff16A34A),
+        foregroundColor: const Color(0xffffffff),
 
         onPressed: () {
           showDialog(

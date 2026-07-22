@@ -95,17 +95,24 @@ class _OtpPageState extends State<OtpPage> {
 
       if (response.data.isNewUser) {
         await StorageService.saveTempToken(
-    response.data.tempToken!);
+          response.data.tempToken!,
+        );
 
-context.go("/complete-profile");
+        if (!mounted) return;
+
+        context.go("/complete-profile");
       } else {
         await StorageService.saveAccessToken(
-    response.data.accessToken!);
+          response.data.accessToken!,
+        );
 
-await StorageService.saveRefreshToken(
-    response.data.refreshToken!);
+        await StorageService.saveRefreshToken(
+          response.data.refreshToken!,
+        );
 
-context.go("/dashboard");
+        if (!mounted) return;
+
+        context.go("/dashboard");
       }
     } catch (e) {
       if (!mounted) return;
@@ -153,81 +160,88 @@ context.go("/dashboard");
     );
 
     return AppPage(
-      child: Column(
-        children: [
-          const SizedBox(height: 30),
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: Column(
+          children: [
+            const SizedBox(height: 30),
 
-          const AppLogo(size: 70),
+            const AppLogo(size: 70),
 
-          const SizedBox(height: 35),
+            const SizedBox(height: 35),
 
-          const Text(
-            "Verify Email",
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+            const Text(
+              "Verify Email",
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 15),
+            const SizedBox(height: 15),
 
-          const Text(
-            "Verification code sent to",
-            style: TextStyle(
-              color: Colors.grey,
+            const Text(
+              "Verification code sent to",
+              style: TextStyle(
+                color: Colors.grey,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 5),
+            const SizedBox(height: 5),
 
-          Text(
-            widget.email,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xff16A34A),
+            Text(
+              widget.email,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color(0xff16A34A),
+              ),
             ),
-          ),
 
-          const SizedBox(height: 40),
+            const SizedBox(height: 40),
 
-          Pinput(
-            controller: otpController,
-            length: 6,
-            defaultPinTheme: defaultPinTheme,
-          ),
-
-          const SizedBox(height: 35),
-
-          Text(
-            "00:${seconds.toString().padLeft(2, '0')}",
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xff16A34A),
+            Pinput(
+              controller: otpController,
+              length: 6,
+              defaultPinTheme: defaultPinTheme,
+              keyboardType: TextInputType.number,
             ),
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 35),
 
-          TextButton(
-            onPressed: seconds == 0
-                ? () {
-                    // TODO
-                    // Call Send OTP API Again
-                    startTimer();
-                  }
-                : null,
-            child: const Text("Resend OTP"),
-          ),
+            Text(
+              "00:${seconds.toString().padLeft(2, '0')}",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff16A34A),
+              ),
+            ),
 
-          const SizedBox(height: 35),
+            const SizedBox(height: 20),
 
-          AppButton(
-            text: "Verify OTP",
-            loading: loading,
-            onPressed: verifyOTP,
-          ),
-        ],
+            TextButton(
+              onPressed: seconds == 0
+                  ? () {
+                      // TODO:
+                      // Call Send OTP API Again
+                      startTimer();
+                    }
+                  : null,
+              child: const Text("Resend OTP"),
+            ),
+
+            const SizedBox(height: 35),
+
+            AppButton(
+              text: "Verify OTP",
+              loading: loading,
+              onPressed: verifyOTP,
+            ),
+
+            // Keyboard open હોય ત્યારે bottom માં થોડું space મળે
+            const SizedBox(height: 30),
+          ],
+        ),
       ),
     );
   }

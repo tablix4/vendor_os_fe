@@ -203,6 +203,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
 
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color(0xff16A34A),
+        foregroundColor: const Color(0xffffffff),
         onPressed: () {
           showDialog(context: context, builder: (_) => const AddMenuDialog());
         },

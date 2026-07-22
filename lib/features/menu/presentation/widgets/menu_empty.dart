@@ -29,8 +29,14 @@ class MenuEmpty extends StatelessWidget {
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: onAdd,
-            icon: const Icon(Icons.add),
-            label: const Text("Add Menu"),
+            icon: const Icon(
+                Icons.add,
+                color: Color(0xff16A34A),
+            ),
+            label: const Text(
+                "Add Menu",
+                style: TextStyle(color: Color(0xff16A34A),),
+            ),
           ),
         ],
       ),

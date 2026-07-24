@@ -44,14 +44,13 @@ class MenuHeader extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 6),
-
+          // const SizedBox(height: 6),
           const Text(
             "Manage your restaurant menu easily",
             style: TextStyle(color: Colors.white70),
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 10),
 
           Row(
             children: [
@@ -81,27 +80,27 @@ class MenuHeader extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 24),
+          // const SizedBox(height: 24),
 
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              onPressed: onAdd,
-              icon: const Icon(Icons.add),
-              label: const Text(
-                "Add Menu Item",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+          // SizedBox(
+          //   width: double.infinity,
+          //   child: FilledButton.icon(
+          //     style: FilledButton.styleFrom(
+          //       backgroundColor: Colors.white,
+          //       foregroundColor: Colors.green,
+          //       padding: const EdgeInsets.symmetric(vertical: 14),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(14),
+          //       ),
+          //     ),
+          //     onPressed: onAdd,
+          //     icon: const Icon(Icons.add),
+          //     label: const Text(
+          //       "Add Menu Item",
+          //       style: TextStyle(fontWeight: FontWeight.bold),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

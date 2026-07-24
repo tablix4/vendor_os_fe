@@ -1,7 +1,7 @@
 class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = "http://192.168.18.208:3000/api";
+  static const String baseUrl = "http://192.168.1.7:3000/api";
 
   static const String sendOtp = "/auth/send-otp";
   static const String verifyOtp = "/auth/verify-otp";
@@ -12,4 +12,5 @@ class ApiConstants {
   static const String orders = "/orders";
   static const String userProfile = "/users/profile";
   static const String updateUserProfile = "/users/profile";
+  static const String dashboard = "/dashboard";
 }

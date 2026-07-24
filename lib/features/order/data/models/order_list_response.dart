@@ -16,16 +16,20 @@ class OrderListResponse {
   bool get hasMore => page * limit < total;
 
   factory OrderListResponse.fromJson(Map<String, dynamic> json) {
+    final rawItems = json['items'];
+
+    final items = rawItems is List
+        ? rawItems
+              .whereType<Map<String, dynamic>>()
+              .map(OrderModel.fromJson)
+              .toList()
+        : <OrderModel>[];
+
     return OrderListResponse(
-      items: (json['items'] as List<dynamic>)
-          .map((e) => OrderModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
-
-      page: json['page'] ?? 1,
-
-      limit: json['limit'] ?? 20,
-
-      total: json['total'] ?? 0,
+      items: items,
+      page: int.tryParse(json['page']?.toString() ?? '') ?? 1,
+      limit: int.tryParse(json['limit']?.toString() ?? '') ?? 20,
+      total: int.tryParse(json['total']?.toString() ?? '') ?? 0,
     );
   }
 }

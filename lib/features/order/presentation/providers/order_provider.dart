@@ -19,9 +19,8 @@ class OrderNotifier extends Notifier<OrderState> {
 
   @override
   OrderState build() {
-    final initialState = const OrderState(isLoading: true);
-    unawaited(loadOrders());
-    return initialState;
+    Future.microtask(loadOrders);
+    return const OrderState();
   }
 
   Future<void> loadOrders({bool loadMore = false, bool force = false}) async {

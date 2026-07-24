@@ -1,4 +1,4 @@
-enum OrderStatus { pending, done }
+enum OrderStatus { pending, completed }
 
 extension OrderStatusExtension on OrderStatus {
   String get apiValue {
@@ -6,8 +6,8 @@ extension OrderStatusExtension on OrderStatus {
       case OrderStatus.pending:
         return "PENDING";
 
-      case OrderStatus.done:
-        return "DONE";
+      case OrderStatus.completed:
+        return "COMPLETED";
     }
   }
 
@@ -16,15 +16,15 @@ extension OrderStatusExtension on OrderStatus {
       case OrderStatus.pending:
         return "Pending";
 
-      case OrderStatus.done:
-        return "Done";
+      case OrderStatus.completed:
+        return "Completed";
     }
   }
 
   static OrderStatus fromApi(String? value) {
     switch ((value ?? "").toUpperCase()) {
-      case "DONE":
-        return OrderStatus.done;
+      case "COMPLETED":
+        return OrderStatus.completed;
 
       case "PENDING":
       default:

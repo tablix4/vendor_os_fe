@@ -125,7 +125,7 @@ class MenuCard extends StatelessWidget {
 
                         Switch(
                           value: menu.isAvailable,
-                          activeColor: const Color(0xff16A34A),
+                          activeColor: const Color.fromARGB(255, 254, 254, 254),
                           onChanged: onAvailabilityChanged,
                         ),
 

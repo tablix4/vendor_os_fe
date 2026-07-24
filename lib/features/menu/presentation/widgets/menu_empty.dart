@@ -30,12 +30,12 @@ class MenuEmpty extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: onAdd,
             icon: const Icon(
-                Icons.add,
-                color: Color(0xff16A34A),
+              Icons.add,
+              color: Color.fromARGB(255, 255, 255, 255),
             ),
             label: const Text(
-                "Add Menu",
-                style: TextStyle(color: Color(0xff16A34A),),
+              "Add Menu",
+              style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
             ),
           ),
         ],

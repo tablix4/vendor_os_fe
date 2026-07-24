@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 
+import '../../../order/data/models/order_status.dart';
+
 class RecentOrderTile extends StatelessWidget {
   final String orderNo;
   final String customer;
   final String amount;
+  final OrderStatus status;
 
   const RecentOrderTile({
     super.key,
     required this.orderNo,
     required this.customer,
     required this.amount,
+    required this.status,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isPending = status == OrderStatus.pending;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(18),
@@ -49,7 +55,9 @@ class RecentOrderTile extends StatelessWidget {
                     fontSize: 16,
                   ),
                 ),
+
                 const SizedBox(height: 4),
+
                 Text(customer, style: const TextStyle(color: Colors.grey)),
               ],
             ),
@@ -65,20 +73,24 @@ class RecentOrderTile extends StatelessWidget {
                   fontSize: 18,
                 ),
               ),
+
               const SizedBox(height: 6),
+
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: isPending
+                      ? Colors.orange.shade100
+                      : Colors.green.shade100,
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: const Text(
-                  "Completed",
+                child: Text(
+                  status.displayName,
                   style: TextStyle(
-                    color: Colors.green,
+                    color: isPending ? Colors.orange.shade800 : Colors.green,
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),

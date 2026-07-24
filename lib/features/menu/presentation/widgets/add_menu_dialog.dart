@@ -336,7 +336,7 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
               SwitchListTile.adaptive(
                 value: isAvailable,
-                activeColor: const Color(0xff16A34A),
+                activeColor: const Color.fromARGB(255, 255, 255, 255),
                 contentPadding: EdgeInsets.zero,
                 title: const Text("Available"),
                 subtitle: const Text("Visible for customers"),

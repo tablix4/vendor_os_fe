@@ -42,7 +42,7 @@ class _OrderPageState extends ConsumerState<OrderPage>
           notifier.filterStatus("PENDING");
           break;
         case 2:
-          notifier.filterStatus("DONE");
+          notifier.filterStatus("COMPLETED");
           break;
       }
     });
@@ -158,11 +158,11 @@ class _OrderPageState extends ConsumerState<OrderPage>
             return OrderCard(
               order: order,
               isUpdating: orderState.updatingOrderId == order.id,
-              onTap: () => context.push('/orders/${order.id}'),
+              onTap: () => context.push('/orders/${order.id}/status'),
               onMarkDone: () async {
                 await notifier.updateOrderStatus(
                   orderId: order.id,
-                  status: "DONE",
+                  status: "COMPLETED",
                 );
               },
             );

@@ -108,8 +108,6 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
 
             const AppLogo(),
 
-            const SizedBox(height: 35),
-
             const Text(
               "Complete Profile",
               style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -123,7 +121,7 @@ class _CompleteProfilePageState extends State<CompleteProfilePage> {
               style: TextStyle(color: Colors.grey),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 10),
 
             AppTextField(
               controller: nameController,

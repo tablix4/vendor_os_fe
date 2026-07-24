@@ -14,7 +14,7 @@ class AuthManager {
       try {
         await _authService.logout(token);
       } catch (_) {
-        // Ignore server failure and clear local session anyway.
+        // Clear local session even when server logout fails.
       }
     }
 

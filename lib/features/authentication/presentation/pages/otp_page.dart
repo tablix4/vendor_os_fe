@@ -3,7 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_hr/core/auth/user_session_reset.dart';
 import 'package:my_hr/core/storage/storage_service.dart';
+import 'package:my_hr/features/category/presentation/providers/category_provider.dart';
+import 'package:my_hr/features/profile/presentation/providers/profile_provider.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../shared/widgets/app_button.dart';
@@ -73,9 +76,21 @@ class _OtpPageState extends ConsumerState<OtpPage> {
   // ------------------------------------------------------------
 
   void _clearPreviousUserState() {
+    // Dashboard
     ref.invalidate(dashboardProvider);
+    ref.invalidate(dashboardFilterProvider);
+
+    // Menu
     ref.invalidate(menuProvider);
+
+    // Orders
     ref.invalidate(orderProvider);
+
+    // Categories
+    ref.invalidate(categoryProvider);
+
+    // Profile
+    ref.invalidate(profileProvider);
   }
 
   // ------------------------------------------------------------
@@ -111,9 +126,20 @@ class _OtpPageState extends ConsumerState<OtpPage> {
       // ----------------------------------------------------------
 
       if (response.data.isNewUser) {
+        // Very important:
+        // New-user registration must not inherit the previous
+        // authenticated user's Riverpod state.
+        resetUserSessionProviders(ref);
+
+        // Clear old authentication storage before establishing
+        // the temporary registration session.
+        await StorageService.clearAll();
+
         await StorageService.saveTempToken(response.data.tempToken!);
 
         if (!mounted) return;
+
+        resetUserSessionProviders(ref);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -130,15 +156,16 @@ class _OtpPageState extends ConsumerState<OtpPage> {
       // ----------------------------------------------------------
       // EXISTING USER
       // ----------------------------------------------------------
-
+      // Clear anything from previous session.
+      resetUserSessionProviders(ref);
       await StorageService.saveAccessToken(response.data.accessToken!);
 
       await StorageService.saveRefreshToken(response.data.refreshToken!);
 
       if (!mounted) return;
 
-      // Clear data belonging to previously logged-in user.
-      _clearPreviousUserState();
+      // Providers recreated after here must use the new account.
+      resetUserSessionProviders(ref);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

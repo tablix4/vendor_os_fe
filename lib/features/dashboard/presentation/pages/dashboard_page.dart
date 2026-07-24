@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import '../widgets/dashboard_date_filter.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_appbar.dart';
 import '../widgets/recent_order_tile.dart';
@@ -143,7 +143,12 @@ class DashboardPage extends ConsumerWidget {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 20),
 
+                    // ==================================================
+                    // DATE FILTER
+                    // ==================================================
+                    const DashboardDateFilterWidget(),
                     const SizedBox(height: 30),
 
                     // ==================================================

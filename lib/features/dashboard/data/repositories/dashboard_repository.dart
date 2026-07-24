@@ -4,7 +4,10 @@ import '../services/dashboard_service.dart';
 class DashboardRepository {
   final DashboardService _service = DashboardService();
 
-  Future<DashboardModel> getDashboard() {
-    return _service.getDashboard();
+  Future<DashboardModel> getDashboard({
+    DateTime? startDate,
+    DateTime? endDate,
+  }) {
+    return _service.getDashboard(startDate: startDate, endDate: endDate);
   }
 }

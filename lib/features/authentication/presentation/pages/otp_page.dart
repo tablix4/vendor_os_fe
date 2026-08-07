@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_hr/core/auth/user_session_reset.dart';
-import 'package:my_hr/core/storage/storage_service.dart';
-import 'package:my_hr/features/category/presentation/providers/category_provider.dart';
-import 'package:my_hr/features/profile/presentation/providers/profile_provider.dart';
 import 'package:pinput/pinput.dart';
+
+import '../../../../core/auth/user_session_reset.dart';
+import '../../../../core/storage/storage_service.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
 
 import '../../../../shared/widgets/app_button.dart';
 import '../../../../shared/widgets/app_logo.dart';
@@ -16,10 +17,6 @@ import '../../../../shared/widgets/app_page.dart';
 import '../../data/models/send_otp_request.dart';
 import '../../data/models/verify_otp_request.dart';
 import '../../data/services/auth_service.dart';
-
-import '../../../dashboard/presentation/providers/dashboard_provider.dart';
-import '../../../menu/presentation/providers/menu_provider.dart';
-import '../../../order/presentation/providers/order_provider.dart';
 
 class OtpPage extends ConsumerStatefulWidget {
   final String email;
@@ -42,20 +39,39 @@ class _OtpPageState extends ConsumerState<OtpPage> {
 
   Timer? timer;
 
+  // ============================================================
+  // LIFECYCLE
+  // ============================================================
+
   @override
   void initState() {
     super.initState();
+
     startTimer();
   }
 
-  // ------------------------------------------------------------
+  @override
+  void dispose() {
+    timer?.cancel();
+    otpController.dispose();
+
+    super.dispose();
+  }
+
+  // ============================================================
   // TIMER
-  // ------------------------------------------------------------
+  // ============================================================
 
   void startTimer() {
     timer?.cancel();
 
-    seconds = 30;
+    if (mounted) {
+      setState(() {
+        seconds = 30;
+      });
+    } else {
+      seconds = 30;
+    }
 
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (seconds <= 0) {
@@ -63,47 +79,25 @@ class _OtpPageState extends ConsumerState<OtpPage> {
         return;
       }
 
-      if (mounted) {
-        setState(() {
-          seconds--;
-        });
-      }
+      if (!mounted) return;
+
+      setState(() {
+        seconds--;
+      });
     });
   }
 
-  // ------------------------------------------------------------
-  // CLEAR PREVIOUS USER STATE
-  // ------------------------------------------------------------
-
-  void _clearPreviousUserState() {
-    // Dashboard
-    ref.invalidate(dashboardProvider);
-    ref.invalidate(dashboardFilterProvider);
-
-    // Menu
-    ref.invalidate(menuProvider);
-
-    // Orders
-    ref.invalidate(orderProvider);
-
-    // Categories
-    ref.invalidate(categoryProvider);
-
-    // Profile
-    ref.invalidate(profileProvider);
-  }
-
-  // ------------------------------------------------------------
+  // ============================================================
   // VERIFY OTP
-  // ------------------------------------------------------------
+  // ============================================================
 
   Future<void> verifyOTP() async {
+    FocusScope.of(context).unfocus();
+
     final otp = otpController.text.trim();
 
     if (otp.length != 6) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Please enter a valid OTP')));
+      _showErrorMessage('Please enter a valid 6-digit OTP.');
 
       return;
     }
@@ -121,69 +115,62 @@ class _OtpPageState extends ConsumerState<OtpPage> {
 
       if (!mounted) return;
 
-      // ----------------------------------------------------------
+      // ========================================================
       // NEW USER
-      // ----------------------------------------------------------
+      // ========================================================
 
       if (response.data.isNewUser) {
-        // Very important:
-        // New-user registration must not inherit the previous
-        // authenticated user's Riverpod state.
+        // Remove Riverpod state belonging to any previous user.
         resetUserSessionProviders(ref);
 
-        // Clear old authentication storage before establishing
-        // the temporary registration session.
+        // Remove old authentication/session data.
         await StorageService.clearAll();
 
+        // Store temporary token for profile completion.
         await StorageService.saveTempToken(response.data.tempToken!);
 
         if (!mounted) return;
 
+        // Ensure all account-specific providers are recreated
+        // for the new registration session.
         resetUserSessionProviders(ref);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message),
-            backgroundColor: Colors.green,
-          ),
-        );
+        _showSuccessMessage(response.message);
 
         context.go('/complete-profile');
 
         return;
       }
 
-      // ----------------------------------------------------------
+      // ========================================================
       // EXISTING USER
-      // ----------------------------------------------------------
-      // Clear anything from previous session.
+      // ========================================================
+
+      // Clear provider state from the previously logged-in user
+      // before establishing the new authenticated session.
       resetUserSessionProviders(ref);
+
+      // Important:
+      // Clear old stored tokens/session before saving new tokens.
+      await StorageService.clearAll();
+
       await StorageService.saveAccessToken(response.data.accessToken!);
 
       await StorageService.saveRefreshToken(response.data.refreshToken!);
 
       if (!mounted) return;
 
-      // Providers recreated after here must use the new account.
+      // Providers created after this point will use the newly
+      // authenticated user's access token.
       resetUserSessionProviders(ref);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.green,
-        ),
-      );
+      _showSuccessMessage(response.message);
 
       context.go('/dashboard');
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceFirst('Exception: ', '')),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showErrorMessage(e.toString().replaceFirst('Exception: ', ''));
     } finally {
       if (mounted) {
         setState(() {
@@ -193,16 +180,16 @@ class _OtpPageState extends ConsumerState<OtpPage> {
     }
   }
 
-  // ------------------------------------------------------------
+  // ============================================================
   // RESEND OTP
-  // ------------------------------------------------------------
+  // ============================================================
 
   Future<void> resendOTP() async {
-    // User can resend only after timer reaches 0.
     if (seconds > 0) return;
 
-    // Prevent multiple API calls.
     if (resendLoading) return;
+
+    FocusScope.of(context).unfocus();
 
     setState(() {
       resendLoading = true;
@@ -215,27 +202,17 @@ class _OtpPageState extends ConsumerState<OtpPage> {
 
       if (!mounted) return;
 
-      // Remove previously entered OTP.
+      // Old OTP should no longer remain in the input.
       otpController.clear();
 
-      // Start another 30-second countdown.
+      // Restart countdown only after successful API response.
       startTimer();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(response.message),
-          backgroundColor: Colors.green,
-        ),
-      );
+      _showSuccessMessage(response.message);
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceFirst('Exception: ', '')),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showErrorMessage(e.toString().replaceFirst('Exception: ', ''));
     } finally {
       if (mounted) {
         setState(() {
@@ -245,32 +222,90 @@ class _OtpPageState extends ConsumerState<OtpPage> {
     }
   }
 
-  // ------------------------------------------------------------
-  // DISPOSE
-  // ------------------------------------------------------------
+  // ============================================================
+  // SNACKBAR HELPERS
+  // ============================================================
 
-  @override
-  void dispose() {
-    timer?.cancel();
-    otpController.dispose();
-
-    super.dispose();
+  void _showSuccessMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+          ),
+          backgroundColor: AppColors.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
   }
 
-  // ------------------------------------------------------------
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+  }
+
+  // ============================================================
   // UI
-  // ------------------------------------------------------------
+  // ============================================================
 
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
-      width: 55,
-      height: 60,
-      textStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+      width: 52,
+      height: 58,
+
+      // Uses our centralized Poppins typography.
+      textStyle: AppTextStyles.title.copyWith(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xff0F172A),
+      ),
+
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xffE2E8F0)),
+      ),
+    );
+
+    final focusedPinTheme = defaultPinTheme.copyWith(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.primary, width: 1.6),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+    );
+
+    final submittedPinTheme = defaultPinTheme.copyWith(
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.40)),
       ),
     );
 
@@ -281,71 +316,166 @@ class _OtpPageState extends ConsumerState<OtpPage> {
           children: [
             const SizedBox(height: 30),
 
+            // ==================================================
+            // LOGO
+            // ==================================================
             const AppLogo(size: 70),
 
-            const SizedBox(height: 35),
+            const SizedBox(height: 34),
 
-            const Text(
-              'Verify Email',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 15),
-
-            const Text(
-              'Verification code sent to',
-              style: TextStyle(color: Colors.grey),
-            ),
-
-            const SizedBox(height: 5),
-
+            // ==================================================
+            // TITLE
+            // ==================================================
             Text(
-              widget.email,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xff16A34A),
+              'Verify Email',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.heading,
+            ),
+
+            const SizedBox(height: 10),
+
+            // ==================================================
+            // DESCRIPTION
+            // ==================================================
+            Text(
+              'We sent a 6-digit verification code to',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.body.copyWith(
+                color: const Color(0xff64748B),
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 6),
 
+            // ==================================================
+            // EMAIL
+            // ==================================================
+            Text(
+              widget.email,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodySemiBold.copyWith(
+                color: AppColors.primary,
+              ),
+            ),
+
+            const SizedBox(height: 36),
+
+            // ==================================================
+            // OTP INPUT
+            // ==================================================
             Pinput(
               controller: otpController,
               length: 6,
               defaultPinTheme: defaultPinTheme,
+              focusedPinTheme: focusedPinTheme,
+              submittedPinTheme: submittedPinTheme,
               keyboardType: TextInputType.number,
-            ),
-
-            const SizedBox(height: 35),
-
-            Text(
-              '00:${seconds.toString().padLeft(2, '0')}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff16A34A),
+              textInputAction: TextInputAction.done,
+              autofocus: false,
+              cursor: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 2,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ],
               ),
+              onCompleted: (_) {
+                if (!loading) {
+                  verifyOTP();
+                }
+              },
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
+            // ==================================================
+            // TIMER
+            // ==================================================
+            if (seconds > 0) ...[
+              Text('Resend code in', style: AppTextStyles.caption),
+
+              const SizedBox(height: 5),
+
+              Text(
+                '00:${seconds.toString().padLeft(2, '0')}',
+                style: AppTextStyles.subtitle.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ] else ...[
+              Text("Didn't receive the code?", style: AppTextStyles.caption),
+            ],
+
+            const SizedBox(height: 10),
+
+            // ==================================================
+            // RESEND OTP
+            // ==================================================
             TextButton(
               onPressed: seconds == 0 && !resendLoading ? resendOTP : null,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                disabledForegroundColor: const Color(0xff94A3B8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+              ),
               child: resendLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
+                      ),
                     )
-                  : const Text('Resend OTP'),
+                  : Text(
+                      'Resend OTP',
+                      style: AppTextStyles.bodySemiBold.copyWith(
+                        color: seconds == 0
+                            ? AppColors.primary
+                            : const Color(0xff94A3B8),
+                      ),
+                    ),
             ),
 
-            const SizedBox(height: 35),
+            const SizedBox(height: 28),
 
+            // ==================================================
+            // VERIFY BUTTON
+            // ==================================================
             AppButton(
               text: 'Verify OTP',
               loading: loading,
               onPressed: verifyOTP,
+            ),
+
+            const SizedBox(height: 18),
+
+            // ==================================================
+            // CHANGE EMAIL
+            // ==================================================
+            TextButton(
+              onPressed: loading || resendLoading
+                  ? null
+                  : () {
+                      context.pop();
+                    },
+              child: Text(
+                'Change Email Address',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
 
             const SizedBox(height: 30),

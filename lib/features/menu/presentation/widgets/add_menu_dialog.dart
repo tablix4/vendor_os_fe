@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+
 import '../../data/models/create_menu_request.dart';
 import '../../data/models/menu_item.dart';
 import '../../data/models/update_menu_request.dart';
@@ -23,17 +26,15 @@ class AddMenuDialog extends ConsumerStatefulWidget {
 }
 
 class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
-  static const Color primaryGreen = Color(0xff16A34A);
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final formKey = GlobalKey<FormState>();
+  final TextEditingController nameController = TextEditingController();
 
-  final nameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
-  final descriptionController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
 
-  final priceController = TextEditingController();
-
-  final imageController = TextEditingController();
+  final TextEditingController imageController = TextEditingController();
 
   String? selectedCategoryId;
 
@@ -42,6 +43,10 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
   File? selectedImage;
 
   bool loading = false;
+
+  // ============================================================
+  // LIFECYCLE
+  // ============================================================
 
   @override
   void initState() {
@@ -72,6 +77,22 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
     super.dispose();
   }
 
+  // ============================================================
+  // CLOSE DIALOG
+  // ============================================================
+
+  void _closeDialog() {
+    if (loading) return;
+
+    FocusScope.of(context).unfocus();
+
+    Navigator.pop(context);
+  }
+
+  // ============================================================
+  // SAVE
+  // ============================================================
+
   Future<void> save() async {
     FocusScope.of(context).unfocus();
 
@@ -80,14 +101,27 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
     }
 
     if (selectedCategoryId == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Please select a category')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Please select a category',
+            style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+          ),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
 
       return;
     }
 
     if (loading) return;
+
+    final price = double.tryParse(priceController.text.trim());
+
+    if (price == null) {
+      return;
+    }
 
     setState(() {
       loading = true;
@@ -95,6 +129,10 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
     try {
       if (widget.isEdit) {
+        // ======================================================
+        // UPDATE MENU
+        // ======================================================
+
         await ref
             .read(menuProvider.notifier)
             .updateMenu(
@@ -105,7 +143,7 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                 description: descriptionController.text.trim().isEmpty
                     ? null
                     : descriptionController.text.trim(),
-                price: double.parse(priceController.text.trim()),
+                price: price,
                 image: imageController.text.trim().isEmpty
                     ? null
                     : imageController.text.trim(),
@@ -113,6 +151,10 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
               ),
             );
       } else {
+        // ======================================================
+        // CREATE MENU
+        // ======================================================
+
         await ref
             .read(menuProvider.notifier)
             .createMenu(
@@ -122,7 +164,7 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                 description: descriptionController.text.trim().isEmpty
                     ? null
                     : descriptionController.text.trim(),
-                price: double.parse(priceController.text.trim()),
+                price: price,
                 image: imageController.text.trim().isEmpty
                     ? null
                     : imageController.text.trim(),
@@ -137,11 +179,16 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: primaryGreen,
+          backgroundColor: AppColors.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           content: Text(
             widget.isEdit
                 ? 'Menu updated successfully'
                 : 'Menu created successfully',
+            style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
           ),
         ),
       );
@@ -150,8 +197,15 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(e.toString().replaceFirst('Exception: ', '')),
+          backgroundColor: Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          content: Text(
+            e.toString().replaceFirst('Exception: ', ''),
+            style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+          ),
         ),
       );
     } finally {
@@ -163,6 +217,10 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
     }
   }
 
+  // ============================================================
+  // UI
+  // ============================================================
+
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(categoryProvider);
@@ -171,16 +229,22 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
     return Dialog(
       backgroundColor: Colors.transparent,
+
       insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+
       child: Container(
         width: double.infinity,
+
         constraints: BoxConstraints(
           maxWidth: 480,
           maxHeight: screenHeight * 0.88,
         ),
+
         decoration: BoxDecoration(
           color: Colors.white,
+
           borderRadius: BorderRadius.circular(26),
+
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.08),
@@ -189,44 +253,55 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
             ),
           ],
         ),
+
         child: Column(
           mainAxisSize: MainAxisSize.min,
+
           children: [
-            // ================================================
+            // ==================================================
             // HEADER
-            // ================================================
+            // ==================================================
             Padding(
               padding: const EdgeInsets.fromLTRB(22, 20, 16, 16),
+
               child: Row(
                 children: [
+                  // --------------------------------------------
+                  // HEADER ICON
+                  // --------------------------------------------
                   Container(
                     width: 50,
                     height: 50,
+
                     decoration: BoxDecoration(
-                      color: primaryGreen.withValues(alpha: 0.10),
+                      color: AppColors.primary.withValues(alpha: 0.10),
+
                       borderRadius: BorderRadius.circular(15),
                     ),
+
                     child: Icon(
                       widget.isEdit
                           ? Icons.edit_rounded
                           : Icons.restaurant_menu_rounded,
-                      color: primaryGreen,
+                      color: AppColors.primary,
                       size: 25,
                     ),
                   ),
 
                   const SizedBox(width: 14),
 
+                  // --------------------------------------------
+                  // TITLE
+                  // --------------------------------------------
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+
                       children: [
                         Text(
                           widget.isEdit ? 'Update Menu Item' : 'Add Menu Item',
-                          style: const TextStyle(
-                            fontSize: 21,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xff0F172A),
+                          style: AppTextStyles.title.copyWith(
+                            color: const Color(0xff0F172A),
                           ),
                         ),
 
@@ -236,23 +311,39 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                           widget.isEdit
                               ? 'Update item details and availability'
                               : 'Add something delicious to your menu',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Color(0xff64748B),
+                          style: AppTextStyles.small.copyWith(
+                            color: const Color(0xff64748B),
                           ),
                         ),
                       ],
                     ),
                   ),
 
+                  const SizedBox(width: 8),
+
+                  // --------------------------------------------
+                  // CLOSE BUTTON
+                  // --------------------------------------------
                   Container(
+                    width: 40,
+                    height: 40,
+
                     decoration: const BoxDecoration(
                       color: Color(0xffF1F5F9),
                       shape: BoxShape.circle,
                     ),
+
                     child: IconButton(
-                      onPressed: loading ? null : () => Navigator.pop(context),
-                      icon: const Icon(Icons.close_rounded, size: 20),
+                      tooltip: 'Close',
+                      padding: EdgeInsets.zero,
+
+                      onPressed: loading ? null : _closeDialog,
+
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        size: 20,
+                        color: Color(0xff475569),
+                      ),
                     ),
                   ),
                 ],
@@ -261,22 +352,26 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
             const Divider(height: 1, color: Color(0xffF1F5F9)),
 
-            // ================================================
+            // ==================================================
             // FORM
-            // ================================================
+            // ==================================================
             Flexible(
               child: SingleChildScrollView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
+
                 padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
+
                 child: Form(
                   key: formKey,
+
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+
                     children: [
-                      // ======================================
+                      // ========================================
                       // CATEGORY
-                      // ======================================
+                      // ========================================
                       _label('Category'),
 
                       const SizedBox(height: 8),
@@ -284,45 +379,78 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                       categories.when(
                         loading: () => Container(
                           height: 56,
+
                           alignment: Alignment.center,
+
                           decoration: _fieldDecoration(),
+
                           child: const SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
 
                         error: (e, _) => Container(
                           width: double.infinity,
+
                           padding: const EdgeInsets.all(14),
+
                           decoration: BoxDecoration(
                             color: Colors.red.withValues(alpha: 0.05),
+
                             borderRadius: BorderRadius.circular(14),
                           ),
+
                           child: Text(
                             e.toString(),
-                            style: const TextStyle(color: Colors.red),
+
+                            style: AppTextStyles.small.copyWith(
+                              color: Colors.red.shade600,
+                            ),
                           ),
                         ),
 
                         data: (items) {
                           return DropdownButtonFormField<String>(
                             value: selectedCategoryId,
+
                             isExpanded: true,
-                            icon: const Icon(Icons.keyboard_arrow_down_rounded),
+
+                            style: AppTextStyles.body.copyWith(
+                              color: const Color(0xff0F172A),
+                            ),
+
+                            icon: const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              color: Color(0xff64748B),
+                            ),
+
+                            dropdownColor: Colors.white,
+
+                            borderRadius: BorderRadius.circular(14),
+
                             decoration: _inputDecoration(
                               hint: 'Select category',
                               icon: Icons.category_outlined,
                             ),
+
                             items: items
                                 .map(
-                                  (category) => DropdownMenuItem(
+                                  (category) => DropdownMenuItem<String>(
                                     value: category.id,
-                                    child: Text(category.name),
+                                    child: Text(
+                                      category.name,
+                                      style: AppTextStyles.body,
+                                    ),
                                   ),
                                 )
                                 .toList(),
+
                             onChanged: loading
                                 ? null
                                 : (value) {
@@ -330,6 +458,7 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                                       selectedCategoryId = value;
                                     });
                                   },
+
                             validator: (value) {
                               if (value == null) {
                                 return 'Please select a category';
@@ -343,23 +472,38 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                       const SizedBox(height: 20),
 
-                      // ======================================
-                      // NAME
-                      // ======================================
+                      // ========================================
+                      // ITEM NAME
+                      // ========================================
                       _label('Item Name'),
 
                       const SizedBox(height: 8),
 
                       TextFormField(
                         controller: nameController,
+
                         textCapitalization: TextCapitalization.words,
+
+                        textInputAction: TextInputAction.next,
+
+                        style: AppTextStyles.body.copyWith(
+                          color: const Color(0xff0F172A),
+                        ),
+
+                        cursorColor: AppColors.primary,
+
                         decoration: _inputDecoration(
                           hint: 'e.g. Paneer Pizza',
                           icon: Icons.restaurant_outlined,
                         ),
+
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'Enter menu name';
+                          }
+
+                          if (value.trim().length < 2) {
+                            return 'Menu name is too short';
                           }
 
                           return null;
@@ -368,17 +512,27 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                       const SizedBox(height: 20),
 
-                      // ======================================
+                      // ========================================
                       // DESCRIPTION
-                      // ======================================
+                      // ========================================
                       _label('Description', optional: true),
 
                       const SizedBox(height: 8),
 
                       TextFormField(
                         controller: descriptionController,
+
                         minLines: 3,
                         maxLines: 4,
+
+                        textCapitalization: TextCapitalization.sentences,
+
+                        style: AppTextStyles.body.copyWith(
+                          color: const Color(0xff0F172A),
+                        ),
+
+                        cursorColor: AppColors.primary,
+
                         decoration: _inputDecoration(
                           hint: 'Describe the item, ingredients, taste...',
                           icon: Icons.notes_rounded,
@@ -388,24 +542,35 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                       const SizedBox(height: 20),
 
-                      // ======================================
+                      // ========================================
                       // PRICE
-                      // ======================================
+                      // ========================================
                       _label('Price'),
 
                       const SizedBox(height: 8),
 
                       TextFormField(
                         controller: priceController,
+
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
+
+                        textInputAction: TextInputAction.done,
+
+                        style: AppTextStyles.body.copyWith(
+                          color: const Color(0xff0F172A),
+                        ),
+
+                        cursorColor: AppColors.primary,
+
                         decoration: _inputDecoration(
                           hint: '0.00',
                           prefix: '₹ ',
                         ),
+
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value == null || value.trim().isEmpty) {
                             return 'Enter price';
                           }
 
@@ -423,9 +588,9 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                         },
                       ),
 
-                      // ======================================
+                      // ========================================
                       // EXISTING IMAGE
-                      // ======================================
+                      // ========================================
                       if (imageController.text.isNotEmpty) ...[
                         const SizedBox(height: 20),
 
@@ -435,17 +600,24 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                         ClipRRect(
                           borderRadius: BorderRadius.circular(16),
+
                           child: Stack(
                             children: [
                               Image.network(
                                 imageController.text,
+
                                 height: 150,
                                 width: double.infinity,
+
                                 fit: BoxFit.cover,
+
                                 errorBuilder: (_, __, ___) => Container(
                                   height: 150,
+
                                   color: const Color(0xffF1F5F9),
+
                                   alignment: Alignment.center,
+
                                   child: const Icon(
                                     Icons.image_not_supported_outlined,
                                     size: 42,
@@ -457,15 +629,21 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                               Positioned(
                                 top: 10,
                                 right: 10,
+
                                 child: Material(
                                   color: Colors.white,
+
                                   shape: const CircleBorder(),
+
                                   child: IconButton(
+                                    tooltip: 'Remove image',
+
                                     onPressed: () {
                                       setState(() {
                                         imageController.clear();
                                       });
                                     },
+
                                     icon: const Icon(
                                       Icons.close_rounded,
                                       size: 18,
@@ -480,67 +658,78 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                       const SizedBox(height: 22),
 
-                      // ======================================
+                      // ========================================
                       // AVAILABILITY
-                      // ======================================
+                      // ========================================
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 13,
                         ),
+
                         decoration: BoxDecoration(
                           color: isAvailable
-                              ? primaryGreen.withValues(alpha: 0.06)
+                              ? AppColors.primary.withValues(alpha: 0.06)
                               : const Color(0xffF8FAFC),
+
                           borderRadius: BorderRadius.circular(16),
+
                           border: Border.all(
                             color: isAvailable
-                                ? primaryGreen.withValues(alpha: 0.25)
+                                ? AppColors.primary.withValues(alpha: 0.25)
                                 : const Color(0xffE2E8F0),
                           ),
                         ),
+
                         child: Row(
                           children: [
                             Container(
                               width: 42,
                               height: 42,
+
                               decoration: BoxDecoration(
                                 color: isAvailable
-                                    ? primaryGreen.withValues(alpha: 0.12)
+                                    ? AppColors.primary.withValues(alpha: 0.12)
                                     : const Color(0xffF1F5F9),
+
                                 borderRadius: BorderRadius.circular(12),
                               ),
+
                               child: Icon(
                                 isAvailable
                                     ? Icons.visibility_rounded
                                     : Icons.visibility_off_rounded,
+
                                 color: isAvailable
-                                    ? primaryGreen
+                                    ? AppColors.primary
                                     : const Color(0xff64748B),
+
                                 size: 21,
                               ),
                             ),
 
                             const SizedBox(width: 12),
 
-                            const Expanded(
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+
                                 children: [
                                   Text(
                                     'Available',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xff0F172A),
+                                    style: AppTextStyles.bodySemiBold.copyWith(
+                                      color: const Color(0xff0F172A),
                                     ),
                                   ),
-                                  SizedBox(height: 2),
+
+                                  const SizedBox(height: 2),
+
                                   Text(
-                                    'Visible for customers and new orders',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Color(0xff64748B),
+                                    isAvailable
+                                        ? 'Visible for customers and new orders'
+                                        : 'Hidden from new orders',
+                                    style: AppTextStyles.small.copyWith(
+                                      color: const Color(0xff64748B),
                                     ),
                                   ),
                                 ],
@@ -549,7 +738,9 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                             Switch.adaptive(
                               value: isAvailable,
-                              activeTrackColor: primaryGreen,
+
+                              activeTrackColor: AppColors.primary,
+
                               onChanged: loading
                                   ? null
                                   : (value) {
@@ -564,30 +755,39 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                       const SizedBox(height: 26),
 
-                      // ======================================
-                      // ACTIONS
-                      // ======================================
+                      // ========================================
+                      // ACTION BUTTONS
+                      // ========================================
                       Row(
                         children: [
+                          // ------------------------------------
+                          // CANCEL
+                          // ------------------------------------
                           Expanded(
                             child: SizedBox(
                               height: 52,
+
                               child: OutlinedButton(
-                                onPressed: loading
-                                    ? null
-                                    : () => Navigator.pop(context),
+                                onPressed: loading ? null : _closeDialog,
+
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xff475569),
+
                                   side: const BorderSide(
                                     color: Color(0xffE2E8F0),
                                   ),
+
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                   ),
                                 ),
-                                child: const Text(
+
+                                child: Text(
                                   'Cancel',
-                                  style: TextStyle(fontWeight: FontWeight.w600),
+
+                                  style: AppTextStyles.button.copyWith(
+                                    color: const Color(0xff475569),
+                                  ),
                                 ),
                               ),
                             ),
@@ -595,18 +795,33 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                           const SizedBox(width: 12),
 
+                          // ------------------------------------
+                          // CREATE / UPDATE
+                          // ------------------------------------
                           Expanded(
                             flex: 2,
+
                             child: SizedBox(
                               height: 52,
+
                               child: FilledButton(
                                 onPressed: loading ? null : save,
+
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: primaryGreen,
+                                  backgroundColor: AppColors.primary,
+
+                                  foregroundColor: Colors.white,
+
+                                  disabledBackgroundColor: AppColors.primary
+                                      .withValues(alpha: 0.65),
+
+                                  elevation: 0,
+
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                   ),
                                 ),
+
                                 child: loading
                                     ? const SizedBox(
                                         width: 20,
@@ -619,6 +834,9 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                                     : Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
+
+                                        mainAxisSize: MainAxisSize.min,
+
                                         children: [
                                           Icon(
                                             widget.isEdit
@@ -626,15 +844,16 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                                                 : Icons.add_rounded,
                                             size: 20,
                                           ),
+
                                           const SizedBox(width: 7),
+
                                           Text(
                                             widget.isEdit
                                                 ? 'Update Menu'
                                                 : 'Create Menu',
-                                            style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                            ),
+
+                                            style: AppTextStyles.button
+                                                .copyWith(color: Colors.white),
                                           ),
                                         ],
                                       ),
@@ -663,17 +882,20 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
       children: [
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Color(0xff334155),
-          ),
+
+          style: AppTextStyles.label.copyWith(color: const Color(0xff334155)),
         ),
+
         if (optional) ...[
           const SizedBox(width: 5),
-          const Text(
+
+          Text(
             '(Optional)',
-            style: TextStyle(fontSize: 11, color: Color(0xff94A3B8)),
+
+            style: AppTextStyles.small.copyWith(
+              color: const Color(0xff94A3B8),
+              fontSize: 11,
+            ),
           ),
         ],
       ],
@@ -692,59 +914,90 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
   }) {
     return InputDecoration(
       hintText: hint,
+
       prefixText: prefix,
+
+      prefixStyle: AppTextStyles.bodySemiBold.copyWith(
+        color: const Color(0xff334155),
+      ),
 
       prefixIcon: icon == null
           ? null
           : Padding(
               padding: EdgeInsets.only(top: alignIconTop ? 12 : 0),
+
               child: Icon(icon, size: 20, color: const Color(0xff64748B)),
             ),
 
       prefixIconConstraints: const BoxConstraints(minWidth: 48),
 
-      hintStyle: const TextStyle(color: Color(0xff94A3B8), fontSize: 14),
+      hintStyle: AppTextStyles.body.copyWith(color: const Color(0xff94A3B8)),
 
       filled: true,
+
       fillColor: const Color(0xffF8FAFC),
 
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
 
+      // ========================================================
+      // DEFAULT
+      // ========================================================
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
+
         borderSide: const BorderSide(color: Color(0xffE2E8F0)),
       ),
 
+      // ========================================================
+      // ENABLED
+      // ========================================================
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
+
         borderSide: const BorderSide(color: Color(0xffE2E8F0)),
       ),
 
+      // ========================================================
+      // FOCUSED
+      // ========================================================
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: primaryGreen, width: 1.5),
+
+        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
 
+      // ========================================================
+      // ERROR
+      // ========================================================
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.red),
+
+        borderSide: BorderSide(color: Colors.red.shade500),
       ),
 
+      // ========================================================
+      // FOCUSED ERROR
+      // ========================================================
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+
+        borderSide: BorderSide(color: Colors.red.shade500, width: 1.5),
       ),
+
+      errorStyle: AppTextStyles.small.copyWith(color: Colors.red.shade600),
     );
   }
 
   // ============================================================
-  // FIELD PLACEHOLDER
+  // LOADING FIELD
   // ============================================================
 
   BoxDecoration _fieldDecoration() {
     return BoxDecoration(
       color: const Color(0xffF8FAFC),
+
       borderRadius: BorderRadius.circular(14),
+
       border: Border.all(color: const Color(0xffE2E8F0)),
     );
   }

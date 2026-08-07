@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_text_styles.dart';
+
 class MenuSearch extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
@@ -12,46 +15,126 @@ class MenuSearch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: ValueListenableBuilder<TextEditingValue>(
+        valueListenable: controller,
+        builder: (context, value, child) {
+          final hasText = value.text.trim().isNotEmpty;
 
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(.08),
-            blurRadius: 14,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
+          return TextField(
+            controller: controller,
 
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
+            onChanged: onChanged,
 
-        decoration: InputDecoration(
-          hintText: "Search menu items...",
+            keyboardType: TextInputType.text,
 
-          hintStyle: TextStyle(color: Colors.grey.shade500),
+            textInputAction: TextInputAction.search,
 
-          prefixIcon: const Icon(Icons.search, color: Color(0xff16A34A)),
+            style: AppTextStyles.body.copyWith(color: const Color(0xff0F172A)),
 
-          suffixIcon: controller.text.isEmpty
-              ? null
-              : IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    controller.clear();
-                    onChanged("");
-                  },
+            cursorColor: AppColors.primary,
+
+            decoration: InputDecoration(
+              // ==================================================
+              // HINT
+              // ==================================================
+              hintText: 'Search menu items...',
+
+              hintStyle: AppTextStyles.body.copyWith(
+                color: const Color(0xff94A3B8),
+              ),
+
+              // ==================================================
+              // SEARCH ICON
+              // ==================================================
+              prefixIcon: Padding(
+                padding: const EdgeInsets.only(left: 4, right: 2),
+                child: Icon(
+                  Icons.search_rounded,
+                  size: 22,
+                  color: hasText ? AppColors.primary : const Color(0xff94A3B8),
                 ),
+              ),
 
-          border: InputBorder.none,
+              prefixIconConstraints: const BoxConstraints(minWidth: 48),
 
-          contentPadding: const EdgeInsets.symmetric(vertical: 18),
-        ),
+              // ==================================================
+              // CLEAR BUTTON
+              // ==================================================
+              suffixIcon: hasText
+                  ? Padding(
+                      padding: const EdgeInsets.only(right: 6),
+                      child: IconButton(
+                        tooltip: 'Clear search',
+                        onPressed: () {
+                          controller.clear();
+
+                          onChanged('');
+
+                          FocusScope.of(context).unfocus();
+                        },
+                        icon: Container(
+                          width: 28,
+                          height: 28,
+                          decoration: const BoxDecoration(
+                            color: Color(0xffF1F5F9),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.close_rounded,
+                            size: 17,
+                            color: Color(0xff64748B),
+                          ),
+                        ),
+                      ),
+                    )
+                  : null,
+
+              // ==================================================
+              // FIELD
+              // ==================================================
+              filled: true,
+
+              fillColor: Colors.white,
+
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 16,
+              ),
+
+              // ==================================================
+              // DEFAULT BORDER
+              // ==================================================
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: Color(0xffE2E8F0)),
+              ),
+
+              // ==================================================
+              // ENABLED BORDER
+              // ==================================================
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                  color: Color(0xffE2E8F0),
+                  width: 1,
+                ),
+              ),
+
+              // ==================================================
+              // FOCUSED BORDER
+              // ==================================================
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

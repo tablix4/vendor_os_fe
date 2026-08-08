@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_hr/core/network/api_client.dart';
 import 'package:my_hr/features/authentication/data/models/logout_response.dart';
@@ -16,20 +17,29 @@ import '../models/complete_profile_response.dart';
 
 class AuthService {
   Future<SendOtpResponse> sendOtp(SendOtpRequest request) async {
-    final response = await http.post(
-      Uri.parse("${ApiConstants.baseUrl}${ApiConstants.sendOtp}"),
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-      body: jsonEncode(request.toJson()),
-    );
+    try {
+      print("========== SEND OTP ==========");
+      print("BASE URL: ${ApiConstants.baseUrl}");
+      print("ENDPOINT: ${ApiConstants.sendOtp}");
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to send OTP");
+      final response = await ApiClient.dio.post(
+        ApiConstants.sendOtp,
+        data: request.toJson(),
+      );
+
+      print("SUCCESS");
+      print(response.data);
+
+      return SendOtpResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      print("========== DIO ERROR ==========");
+      print("TYPE: ${e.type}");
+      print("MESSAGE: ${e.message}");
+      print("URI: ${e.requestOptions.uri}");
+      print("ERROR: ${e.error}");
+      print("RESPONSE: ${e.response?.data}");
+      rethrow;
     }
-
-    return SendOtpResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<VerifyOtpResponse> verifyOtp(VerifyOtpRequest request) async {

@@ -125,7 +125,7 @@ class SlidableCategoryCard extends StatelessWidget {
                             const SizedBox(height: 6),
 
                             Text(
-                              "${category.itemCount} Items",
+                              "${category.menuItemCount} Items",
 
                               style: TextStyle(color: Colors.grey.shade600),
                             ),

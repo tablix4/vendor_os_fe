@@ -7,14 +7,14 @@ class CategoryModel {
 
   final DateTime updatedAt;
 
-  final int itemCount;
+  final int menuItemCount;
 
   const CategoryModel({
     required this.id,
     required this.name,
     required this.createdAt,
     required this.updatedAt,
-    required this.itemCount,
+    required this.menuItemCount,
   });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,7 @@ class CategoryModel {
       updatedAt: DateTime.parse(json["updatedAt"]),
 
       // Backend doesn't return this yet
-      itemCount: json["itemCount"] ?? 0,
+      menuItemCount: json["menuItemCount"] ?? 0,
     );
   }
 }

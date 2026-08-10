@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:my_hr/core/theme/app_colors.dart';
+import 'package:tablix/core/theme/app_colors.dart';
 import '../../data/models/category_model.dart';
 import 'slidable_action_button.dart';
 
@@ -160,8 +160,8 @@ class SlidableCategoryCard extends StatelessWidget {
 
                         style: TextStyle(
                           color: Colors.grey.shade600,
-                          fontSize: 12
-                          ),
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),

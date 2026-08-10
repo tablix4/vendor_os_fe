@@ -64,7 +64,7 @@ class CategoryTile extends StatelessWidget {
                       const SizedBox(height: 6),
 
                       Text(
-                        "${category.itemCount} Menu Items",
+                        "${category.menuItemCount} Menu Items",
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
                     ],

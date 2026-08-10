@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:my_hr/core/theme/app_colors.dart';
+import 'package:tablix/core/theme/app_colors.dart';
 
 import '../../data/models/menu_item.dart';
 import '../../../category/presentation/widgets/slidable_action_button.dart';
@@ -71,9 +71,7 @@ class MenuCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         elevation: 1,
         color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
           child: Row(
@@ -83,7 +81,6 @@ class MenuCard extends StatelessWidget {
               // _buildImage(),
 
               // const SizedBox(width: 14),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,20 +156,15 @@ class MenuCard extends StatelessWidget {
                         Icon(
                           Icons.circle,
                           size: 10,
-                          color:
-                              menu.isAvailable ? Colors.green : Colors.red,
+                          color: menu.isAvailable ? Colors.green : Colors.red,
                         ),
 
                         const SizedBox(width: 6),
 
                         Text(
-                          menu.isAvailable
-                              ? "Available"
-                              : "Out of Stock",
+                          menu.isAvailable ? "Available" : "Out of Stock",
                           style: TextStyle(
-                            color: menu.isAvailable
-                                ? Colors.green
-                                : Colors.red,
+                            color: menu.isAvailable ? Colors.green : Colors.red,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -230,11 +222,7 @@ class MenuCard extends StatelessWidget {
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Icon(
-        Icons.restaurant_menu,
-        size: 42,
-        color: Colors.grey,
-      ),
+      child: const Icon(Icons.restaurant_menu, size: 42, color: Colors.grey),
     );
   }
 }

@@ -77,7 +77,7 @@ class _AddMenuPageState extends State<AddMenuPage> {
                 const SizedBox(width: 10),
 
                 const Text(
-                  "Add Menu Item",
+                  "Add Item",
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
               ],

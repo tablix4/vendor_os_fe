@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
+import '../../../profile/presentation/providers/profile_provider.dart';
 import '../providers/dashboard_provider.dart';
 import '../widgets/dashboard_appbar.dart';
 import '../widgets/dashboard_date_filter.dart';
@@ -180,6 +181,7 @@ class DashboardPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(dashboardProvider);
+    final profileState = ref.watch(profileProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FC),
@@ -238,17 +240,8 @@ class DashboardPage extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Good Morning 👋',
-                                style: AppTextStyles.heading,
-                              ),
-
-                              const SizedBox(height: 6),
-
-                              Text(
-                                "Here's your business summary.",
-                                style: AppTextStyles.body.copyWith(
-                                  color: const Color(0xff64748B),
-                                ),
+                                 'Hi, ${profileState.value?.name ?? 'User'}',
+                                style: AppTextStyles.title,
                               ),
                             ],
                           ),
@@ -259,30 +252,30 @@ class DashboardPage extends ConsumerWidget {
                         // ------------------------------------------
                         // NEW ORDER BUTTON
                         // ------------------------------------------
-                        FilledButton.icon(
-                          onPressed: () {
-                            context.push('/orders/create');
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 14,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          icon: const Icon(Icons.add_rounded, size: 20),
-                          label: Text(
-                            'New Order',
-                            style: AppTextStyles.button.copyWith(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                        // FilledButton.icon(
+                        //   onPressed: () {
+                        //     context.push('/orders/create');
+                        //   },
+                        //   style: FilledButton.styleFrom(
+                        //     backgroundColor: AppColors.primary,
+                        //     foregroundColor: Colors.white,
+                        //     elevation: 0,
+                        //     padding: const EdgeInsets.symmetric(
+                        //       horizontal: 16,
+                        //       vertical: 14,
+                        //     ),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(14),
+                        //     ),
+                        //   ),
+                        //   icon: const Icon(Icons.add_rounded, size: 20),
+                        //   label: Text(
+                        //     'New Order',
+                        //     style: AppTextStyles.button.copyWith(
+                        //       color: Colors.white,
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
 
@@ -293,7 +286,7 @@ class DashboardPage extends ConsumerWidget {
                     // ==================================================
                     const DashboardDateFilterWidget(),
 
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 20),
 
                     // ==================================================
                     // SUMMARY ROW 1
@@ -352,7 +345,7 @@ class DashboardPage extends ConsumerWidget {
                       ],
                     ),
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 20),
 
                     // ==================================================
                     // RECENT ORDERS HEADER

@@ -111,6 +111,7 @@ class _CreateOrderPageState extends ConsumerState<CreateOrderPage> {
   // CALCULATE ORDER TOTAL
   // ============================================================
 
+  // ignore: strict_top_level_inference
   double _calculateTotal(orderState) {
     double total = 0;
 

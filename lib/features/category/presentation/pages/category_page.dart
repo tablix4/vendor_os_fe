@@ -367,6 +367,10 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
   @override
   Widget build(BuildContext context) {
     final categories = ref.watch(categoryProvider);
+    final totalCategories = categories.maybeWhen(
+      data: (items) => items.length,
+      orElse: () => 0,
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xffF8FAFC),
@@ -383,9 +387,63 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
 
         titleSpacing: 20,
 
-        title: Text(
-          'Category Management',
-          style: AppTextStyles.heading.copyWith(fontSize: 24),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Categories',
+                style: AppTextStyles.heading.copyWith(fontSize: 24),
+              ),
+            ),
+
+            // const SizedBox(width: 10),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '$totalCategories',
+                style: AppTextStyles.subtitle.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            SizedBox(
+              height: 42,
+              child: FilledButton(
+                onPressed: _showAddCategoryDialog,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add_rounded, size: 19),
+
+                    const SizedBox(width: 5),
+
+                    Text(
+                      'New',
+                      style: AppTextStyles.button.copyWith(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
 
@@ -442,10 +500,10 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                 // ==================================================
                 // CATEGORY HEADER
                 // ==================================================
-                CategoryHeader(
-                  totalCategories: items.length,
-                  onAdd: _showAddCategoryDialog,
-                ),
+                // CategoryHeader(
+                //   totalCategories: items.length,
+                //   onAdd: _showAddCategoryDialog,
+                // ),
 
                 // ==================================================
                 // SEARCH
@@ -459,7 +517,7 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
                   },
                 ),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
                 // ==================================================
                 // EMPTY DATABASE
@@ -568,24 +626,24 @@ class _CategoryPageState extends ConsumerState<CategoryPage> {
       // ========================================================
       // ADD CATEGORY BUTTON
       // ========================================================
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddCategoryDialog,
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: _showAddCategoryDialog,
 
-        elevation: 2,
-        highlightElevation: 4,
+      //   elevation: 2,
+      //   highlightElevation: 4,
 
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+      //   backgroundColor: AppColors.primary,
+      //   foregroundColor: Colors.white,
 
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
 
-        icon: const Icon(Icons.add_rounded, size: 22),
+      //   icon: const Icon(Icons.add_rounded, size: 22),
 
-        label: Text(
-          'Add Category',
-          style: AppTextStyles.button.copyWith(color: Colors.white),
-        ),
-      ),
+      //   label: Text(
+      //     'Add Category',
+      //     style: AppTextStyles.button.copyWith(color: Colors.white),
+      //   ),
+      // ),
     );
   }
 }

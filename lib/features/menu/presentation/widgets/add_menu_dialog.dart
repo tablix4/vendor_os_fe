@@ -269,26 +269,26 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                   // --------------------------------------------
                   // HEADER ICON
                   // --------------------------------------------
-                  Container(
-                    width: 50,
-                    height: 50,
+                  // Container(
+                  //   width: 50,
+                  //   height: 50,
 
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.10),
+                  //   decoration: BoxDecoration(
+                  //     color: AppColors.primary.withValues(alpha: 0.10),
 
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                  //     borderRadius: BorderRadius.circular(15),
+                  //   ),
 
-                    child: Icon(
-                      widget.isEdit
-                          ? Icons.edit_rounded
-                          : Icons.restaurant_menu_rounded,
-                      color: AppColors.primary,
-                      size: 25,
-                    ),
-                  ),
+                  //   child: Icon(
+                  //     widget.isEdit
+                  //         ? Icons.edit_rounded
+                  //         : Icons.restaurant_menu_rounded,
+                  //     color: AppColors.primary,
+                  //     size: 25,
+                  //   ),
+                  // ),
 
-                  const SizedBox(width: 14),
+                  // const SizedBox(width: 14),
 
                   // --------------------------------------------
                   // TITLE
@@ -299,23 +299,41 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                       children: [
                         Text(
-                          widget.isEdit ? 'Update Menu Item' : 'Add Menu Item',
+                          widget.isEdit ? 'Update Item' : 'Add Item',
                           style: AppTextStyles.title.copyWith(
                             color: const Color(0xff0F172A),
                           ),
                         ),
 
-                        const SizedBox(height: 3),
+                        // const SizedBox(height: 3),
 
-                        Text(
-                          widget.isEdit
-                              ? 'Update item details and availability'
-                              : 'Add something delicious to your menu',
-                          style: AppTextStyles.small.copyWith(
-                            color: const Color(0xff64748B),
-                          ),
-                        ),
+                        // Text(
+                        //   widget.isEdit
+                        //       ? 'Update item details and availability'
+                        //       : 'Add something delicious to your menu',
+                        //   style: AppTextStyles.small.copyWith(
+                        //     color: const Color(0xff64748B),
+                        //   ),
+                        // ),
                       ],
+                    ),
+                  ),
+
+                  // --------------------------------------------
+                  // SWITCH
+                  // --------------------------------------------
+                  Transform.scale(
+                    scale: 0.8,
+                    child: Switch.adaptive(
+                      value: isAvailable,
+                      activeTrackColor: AppColors.primary,
+                      onChanged: loading
+                          ? null
+                          : (value) {
+                              setState(() {
+                                isAvailable = value;
+                              });
+                            },
                     ),
                   ),
 
@@ -417,7 +435,7 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                         data: (items) {
                           return DropdownButtonFormField<String>(
-                            value: selectedCategoryId,
+                            initialValue: selectedCategoryId,
 
                             isExpanded: true,
 
@@ -535,7 +553,7 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                         decoration: _inputDecoration(
                           hint: 'Describe the item, ingredients, taste...',
-                          icon: Icons.notes_rounded,
+                          // icon: Icons.notes_rounded,
                           alignIconTop: true,
                         ),
                       ),
@@ -566,7 +584,8 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                         decoration: _inputDecoration(
                           hint: '0.00',
-                          prefix: '₹ ',
+                          icon: Icons.currency_rupee_rounded,
+                          // prefix: '₹ ',
                         ),
 
                         validator: (value) {
@@ -656,103 +675,6 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                         ),
                       ],
 
-                      const SizedBox(height: 22),
-
-                      // ========================================
-                      // AVAILABILITY
-                      // ========================================
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 13,
-                        ),
-
-                        decoration: BoxDecoration(
-                          color: isAvailable
-                              ? AppColors.primary.withValues(alpha: 0.06)
-                              : const Color(0xffF8FAFC),
-
-                          borderRadius: BorderRadius.circular(16),
-
-                          border: Border.all(
-                            color: isAvailable
-                                ? AppColors.primary.withValues(alpha: 0.25)
-                                : const Color(0xffE2E8F0),
-                          ),
-                        ),
-
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 42,
-                              height: 42,
-
-                              decoration: BoxDecoration(
-                                color: isAvailable
-                                    ? AppColors.primary.withValues(alpha: 0.12)
-                                    : const Color(0xffF1F5F9),
-
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-
-                              child: Icon(
-                                isAvailable
-                                    ? Icons.visibility_rounded
-                                    : Icons.visibility_off_rounded,
-
-                                color: isAvailable
-                                    ? AppColors.primary
-                                    : const Color(0xff64748B),
-
-                                size: 21,
-                              ),
-                            ),
-
-                            const SizedBox(width: 12),
-
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-
-                                children: [
-                                  Text(
-                                    'Available',
-                                    style: AppTextStyles.bodySemiBold.copyWith(
-                                      color: const Color(0xff0F172A),
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 2),
-
-                                  Text(
-                                    isAvailable
-                                        ? 'Visible for customers and new orders'
-                                        : 'Hidden from new orders',
-                                    style: AppTextStyles.small.copyWith(
-                                      color: const Color(0xff64748B),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            Switch.adaptive(
-                              value: isAvailable,
-
-                              activeTrackColor: AppColors.primary,
-
-                              onChanged: loading
-                                  ? null
-                                  : (value) {
-                                      setState(() {
-                                        isAvailable = value;
-                                      });
-                                    },
-                            ),
-                          ],
-                        ),
-                      ),
-
                       const SizedBox(height: 26),
 
                       // ========================================
@@ -799,7 +721,7 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
                           // CREATE / UPDATE
                           // ------------------------------------
                           Expanded(
-                            flex: 2,
+                            flex: 1,
 
                             child: SizedBox(
                               height: 52,
@@ -849,8 +771,8 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
 
                                           Text(
                                             widget.isEdit
-                                                ? 'Update Menu'
-                                                : 'Create Menu',
+                                                ? 'Update'
+                                                : 'Create',
 
                                             style: AppTextStyles.button
                                                 .copyWith(color: Colors.white),
@@ -924,12 +846,12 @@ class _AddMenuDialogState extends ConsumerState<AddMenuDialog> {
       prefixIcon: icon == null
           ? null
           : Padding(
-              padding: EdgeInsets.only(top: alignIconTop ? 12 : 0),
+              padding: EdgeInsets.only(top: alignIconTop ? 12 : 0, left: 8),
 
               child: Icon(icon, size: 20, color: const Color(0xff64748B)),
             ),
 
-      prefixIconConstraints: const BoxConstraints(minWidth: 48),
+      prefixIconConstraints: const BoxConstraints(minWidth: 40),
 
       hintStyle: AppTextStyles.body.copyWith(color: const Color(0xff94A3B8)),
 

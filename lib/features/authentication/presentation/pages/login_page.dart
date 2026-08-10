@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 50),
               const AppLogo(),
               const SizedBox(height: 40),
-              Text('Welcome Back 👋', style: AppTextStyles.display),
+              Text('Welcome', style: AppTextStyles.display),
               const SizedBox(height: 10),
               Text(
                 'Sign in to continue managing\nyour restaurant.',

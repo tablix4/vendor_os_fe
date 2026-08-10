@@ -145,7 +145,7 @@ class MenuEmpty extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.add_rounded, size: 21),
                 label: Text(
-                  'Add Menu Item',
+                  'Add Item',
                   style: AppTextStyles.button.copyWith(color: Colors.white),
                 ),
               ),

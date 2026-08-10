@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:my_hr/core/theme/app_colors.dart';
 import '../../data/models/category_model.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'slidable_action_button.dart';
 
 class SlidableCategoryCard extends StatelessWidget {
@@ -33,11 +33,11 @@ class SlidableCategoryCard extends StatelessWidget {
                 onPressed: (_) {
                   onEdit();
                 },
-
+                backgroundColor: Colors.transparent,
                 child: SlidableActionButton(
                   icon: Icons.edit_rounded,
                   title: "Edit",
-                  color: const Color(0xff16A34A),
+                  color: AppColors.primary,
                   onTap: onEdit,
                 ),
               ),
@@ -52,7 +52,7 @@ class SlidableCategoryCard extends StatelessWidget {
                 onPressed: (_) {
                   onDelete();
                 },
-
+                backgroundColor: Colors.transparent,
                 child: SlidableActionButton(
                   icon: Icons.delete_forever_rounded,
                   title: "Delete",
@@ -64,7 +64,7 @@ class SlidableCategoryCard extends StatelessWidget {
           ),
 
           child: Card(
-            margin: const EdgeInsets.only(bottom: 18),
+            margin: const EdgeInsets.only(bottom: 10),
 
             elevation: 3,
 
@@ -77,7 +77,7 @@ class SlidableCategoryCard extends StatelessWidget {
             ),
 
             child: Padding(
-              padding: const EdgeInsets.all(22),
+              padding: const EdgeInsets.all(18),
 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,11 +87,10 @@ class SlidableCategoryCard extends StatelessWidget {
                     children: [
                       Container(
                         width: 60,
-
                         height: 60,
 
                         decoration: BoxDecoration(
-                          color: const Color(0xff16A34A).withOpacity(.12),
+                          color: AppColors.primary.withValues(alpha: .12),
 
                           borderRadius: BorderRadius.circular(18),
                         ),
@@ -99,13 +98,14 @@ class SlidableCategoryCard extends StatelessWidget {
                         child: const Icon(
                           Icons.fastfood_rounded,
 
-                          color: Color(0xff16A34A),
+                          // color: Color(0xff16A34A),
+                          color: AppColors.primary,
 
                           size: 34,
                         ),
                       ),
 
-                      const SizedBox(width: 18),
+                      const SizedBox(width: 12),
 
                       Expanded(
                         child: Column(
@@ -135,28 +135,33 @@ class SlidableCategoryCard extends StatelessWidget {
                     ],
                   ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 5),
 
                   Divider(color: Colors.grey.shade200),
 
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 0),
 
                   Row(
                     children: [
+                      const Spacer(),
+
                       Icon(
                         Icons.schedule,
                         color: Colors.grey.shade500,
-                        size: 18,
+                        size: 12,
                       ),
 
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 5),
 
                       Text(
                         DateFormat(
                           "dd MMM yyyy • hh:mm a",
                         ).format(category.updatedAt),
 
-                        style: TextStyle(color: Colors.grey.shade600),
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12
+                          ),
                       ),
                     ],
                   ),

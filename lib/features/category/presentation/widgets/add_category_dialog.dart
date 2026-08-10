@@ -440,7 +440,7 @@ class _AddCategoryDialogState extends State<AddCategoryDialog> {
                     // CREATE / UPDATE
                     // ----------------------------------------------
                     Expanded(
-                      flex: 2,
+                      flex: 1,
 
                       child: SizedBox(
                         height: 52,

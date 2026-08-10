@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'bottom_sheet/menu_action_sheet.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:my_hr/core/theme/app_colors.dart';
+
 import '../../data/models/menu_item.dart';
+import '../../../category/presentation/widgets/slidable_action_button.dart';
 
 class MenuCard extends StatelessWidget {
   final MenuItemModel menu;
@@ -21,26 +24,71 @@ class MenuCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 14),
-      elevation: 1,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(18),
-        onTap: onEdit,
+    return Slidable(
+      key: ValueKey(menu.id),
+
+      // LEFT SIDE → EDIT
+      startActionPane: ActionPane(
+        extentRatio: .30,
+        motion: const StretchMotion(),
+        children: [
+          CustomSlidableAction(
+            onPressed: (_) {
+              onEdit();
+            },
+            backgroundColor: Colors.transparent,
+            child: SlidableActionButton(
+              icon: Icons.edit_rounded,
+              title: "Edit",
+              color: AppColors.primary,
+              onTap: onEdit,
+            ),
+          ),
+        ],
+      ),
+
+      // RIGHT SIDE → DELETE
+      endActionPane: ActionPane(
+        extentRatio: .30,
+        motion: const StretchMotion(),
+        children: [
+          CustomSlidableAction(
+            onPressed: (_) {
+              onDelete();
+            },
+            backgroundColor: Colors.transparent,
+            child: SlidableActionButton(
+              icon: Icons.delete_forever_rounded,
+              title: "Delete",
+              color: Colors.red,
+              onTap: onDelete,
+            ),
+          ),
+        ],
+      ),
+
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 10),
+        elevation: 1,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Menu image intentionally kept hidden
               // _buildImage(),
-              const SizedBox(width: 14),
+
+              // const SizedBox(width: 14),
 
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // MENU NAME + PRICE
                     Row(
                       children: [
                         Expanded(
@@ -68,6 +116,7 @@ class MenuCard extends StatelessWidget {
 
                     const SizedBox(height: 8),
 
+                    // CATEGORY
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
@@ -87,6 +136,7 @@ class MenuCard extends StatelessWidget {
                       ),
                     ),
 
+                    // DESCRIPTION
                     if (menu.description != null &&
                         menu.description!.isNotEmpty) ...[
                       const SizedBox(height: 10),
@@ -101,81 +151,47 @@ class MenuCard extends StatelessWidget {
                       ),
                     ],
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 0),
 
+                    // AVAILABILITY + SWITCH
                     Row(
                       children: [
                         Icon(
                           Icons.circle,
                           size: 10,
-                          color: menu.isAvailable ? Colors.green : Colors.red,
+                          color:
+                              menu.isAvailable ? Colors.green : Colors.red,
                         ),
 
                         const SizedBox(width: 6),
 
                         Text(
-                          menu.isAvailable ? "Available" : "Out of Stock",
+                          menu.isAvailable
+                              ? "Available"
+                              : "Out of Stock",
                           style: TextStyle(
-                            color: menu.isAvailable ? Colors.green : Colors.red,
+                            color: menu.isAvailable
+                                ? Colors.green
+                                : Colors.red,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
 
                         const Spacer(),
 
-                        Switch(
-                          value: menu.isAvailable,
-                          activeColor: const Color.fromARGB(255, 254, 254, 254),
-                          onChanged: onAvailabilityChanged,
-                        ),
-
-                        IconButton(
-                          icon: const Icon(Icons.more_vert),
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              showDragHandle: false,
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(30),
-                                ),
-                              ),
-                              builder: (_) {
-                                return MenuActionSheet(
-                                  menu: menu,
-
-                                  onEdit: onEdit,
-
-                                  onDelete: onDelete,
-
-                                  onToggleAvailability: () {
-                                    onAvailabilityChanged(!menu.isAvailable);
-                                  },
-
-                                  onDuplicate: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          "Duplicate feature coming soon",
-                                        ),
-                                      ),
-                                    );
-                                  },
-
-                                  onChangeImage: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          "Image upload coming soon",
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          },
+                        Transform.scale(
+                          scale: 0.8,
+                          alignment: Alignment.centerRight,
+                          child: Switch(
+                            value: menu.isAvailable,
+                            activeThumbColor: const Color.fromARGB(
+                              255,
+                              254,
+                              254,
+                              254,
+                            ),
+                            onChanged: onAvailabilityChanged,
+                          ),
                         ),
                       ],
                     ),
@@ -214,7 +230,11 @@ class MenuCard extends StatelessWidget {
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Icon(Icons.restaurant_menu, size: 42, color: Colors.grey),
+      child: const Icon(
+        Icons.restaurant_menu,
+        size: 42,
+        color: Colors.grey,
+      ),
     );
   }
 }

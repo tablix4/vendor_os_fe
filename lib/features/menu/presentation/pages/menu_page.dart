@@ -439,6 +439,10 @@ class _MenuPageState extends ConsumerState<MenuPage> {
   @override
   Widget build(BuildContext context) {
     final menus = ref.watch(menuProvider);
+    final totalMenuItems = menus.maybeWhen(
+      data: (items) => items.length,
+      orElse: () => 0,
+    );
 
     final categories = ref.watch(categoryProvider);
 
@@ -454,10 +458,66 @@ class _MenuPageState extends ConsumerState<MenuPage> {
         centerTitle: false,
         backgroundColor: const Color(0xffF8FAFC),
         surfaceTintColor: const Color(0xffF8FAFC),
+
         titleSpacing: 20,
-        title: Text(
-          'Menu Management',
-          style: AppTextStyles.heading.copyWith(fontSize: 24),
+
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Menu',
+                style: AppTextStyles.heading.copyWith(fontSize: 24),
+              ),
+            ),
+
+            // const SizedBox(width: 10),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '$totalMenuItems',
+                style: AppTextStyles.subtitle.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 10),
+
+            SizedBox(
+              height: 42,
+              child: FilledButton(
+                onPressed: _showAddMenuDialog,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add_rounded, size: 19),
+
+                    const SizedBox(width: 5),
+
+                    Text(
+                      'New',
+                      style: AppTextStyles.button.copyWith(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
 
@@ -554,7 +614,7 @@ class _MenuPageState extends ConsumerState<MenuPage> {
                   loading: () {
                     return const SizedBox.shrink();
                   },
-                  error: (_, __) {
+                  error: (_, _) {
                     return const SizedBox.shrink();
                   },
                   data: (list) {
@@ -634,19 +694,19 @@ class _MenuPageState extends ConsumerState<MenuPage> {
       // ========================================================
       // ADD MENU BUTTON
       // ========================================================
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddMenuDialog,
-        elevation: 2,
-        highlightElevation: 4,
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        icon: const Icon(Icons.add_rounded, size: 22),
-        label: Text(
-          'Add Menu',
-          style: AppTextStyles.button.copyWith(color: Colors.white),
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: _showAddMenuDialog,
+      //   elevation: 2,
+      //   highlightElevation: 4,
+      //   backgroundColor: AppColors.primary,
+      //   foregroundColor: Colors.white,
+      //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      //   icon: const Icon(Icons.add_rounded, size: 22),
+      //   label: Text(
+      //     'Add Menu',
+      //     style: AppTextStyles.button.copyWith(color: Colors.white),
+      //   ),
+      // ),
     );
   }
 }

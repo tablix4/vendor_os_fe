@@ -17,7 +17,7 @@ class CategoryHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         gradient: const LinearGradient(
@@ -36,54 +36,6 @@ class CategoryHeader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ====================================================
-          // TOP ICON
-          // ====================================================
-          // Container(
-          //   width: 46,
-          //   height: 46,
-          //   decoration: BoxDecoration(
-          //     color: Colors.white.withValues(alpha: 0.16),
-          //     borderRadius: BorderRadius.circular(14),
-          //   ),
-          //   child: const Icon(
-          //     Icons.category_rounded,
-          //     color: Colors.white,
-          //     size: 25,
-          //   ),
-          // ),
-
-          // const SizedBox(height: 18),
-
-          // ====================================================
-          // TITLE
-          // ====================================================
-          Text(
-            'Categories',
-            style: AppTextStyles.heading.copyWith(
-              color: Colors.white,
-              fontSize: 27,
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // ====================================================
-          // DESCRIPTION
-          // ====================================================
-          Text(
-            'Organize your restaurant menu into categories.',
-            style: AppTextStyles.body.copyWith(
-              color: Colors.white.withValues(alpha: 0.82),
-              height: 1.45,
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          // ====================================================
-          // STAT + ADD BUTTON
-          // ====================================================
           Row(
             children: [
               // ==================================================
@@ -92,7 +44,7 @@ class CategoryHeader extends StatelessWidget {
               Expanded(
                 child: Container(
                   height: 64,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(16),
@@ -171,42 +123,6 @@ class CategoryHeader extends StatelessWidget {
                           style: AppTextStyles.subtitle.copyWith(
                             color: Colors.white,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              const SizedBox(width: 12),
-
-              // ==================================================
-              // ADD BUTTON
-              // ==================================================
-              SizedBox(
-                height: 64,
-                child: FilledButton(
-                  onPressed: onAdd,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: AppColors.primary,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.add_rounded, size: 21),
-
-                      const SizedBox(width: 6),
-
-                      Text(
-                        'Add',
-                        style: AppTextStyles.button.copyWith(
-                          color: AppColors.primary,
                         ),
                       ),
                     ],

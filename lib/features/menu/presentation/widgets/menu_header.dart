@@ -21,24 +21,24 @@ class MenuHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(0),
 
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
 
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, Color(0xff0F766E)],
-        ),
+        // gradient: const LinearGradient(
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        //   colors: [AppColors.primary, Color(0xff0F766E)],
+        // ),
 
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.18),
-            blurRadius: 22,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: AppColors.primary.withValues(alpha: 0.18),
+        //     blurRadius: 22,
+        //     offset: const Offset(0, 8),
+        //   ),
+        // ],
       ),
 
       child: Column(
@@ -68,10 +68,10 @@ class MenuHeader extends StatelessWidget {
           // TITLE
           // ====================================================
           Text(
-            'Menu Management',
-            style: AppTextStyles.heading.copyWith(
-              color: Colors.white,
-              fontSize: 27,
+            'Items availibility',
+            style: AppTextStyles.subtitle.copyWith(
+              color: Colors.black,
+              fontSize: 18,
             ),
           ),
 
@@ -80,15 +80,15 @@ class MenuHeader extends StatelessWidget {
           // ====================================================
           // DESCRIPTION
           // ====================================================
-          Text(
-            'Manage your restaurant menu easily.',
-            style: AppTextStyles.body.copyWith(
-              color: Colors.white.withValues(alpha: 0.82),
-              height: 1.45,
-            ),
-          ),
+          // Text(
+          //   'Manage your restaurant menu easily.',
+          //   style: AppTextStyles.body.copyWith(
+          //     color: Colors.white.withValues(alpha: 0.82),
+          //     height: 1.45,
+          //   ),
+          // ),
 
-          const SizedBox(height: 24),
+          // const SizedBox(height: 24),
 
           // ====================================================
           // STATISTICS
@@ -98,37 +98,37 @@ class MenuHeader extends StatelessWidget {
               // ==================================================
               // TOTAL ITEMS
               // ==================================================
-              Expanded(
-                child: _buildStat(
-                  title: 'Total',
-                  value: totalItems.toString(),
-                  icon: Icons.restaurant_menu_rounded,
-                ),
-              ),
+              // Expanded(
+              //   child: _buildStat(
+              //     title: 'Total',
+              //     value: totalItems.toString(),
+              //     // icon: Icons.restaurant_menu_rounded,
+              //   ),
+              // ),
 
-              const SizedBox(width: 10),
+              // const SizedBox(width: 10),
 
               // ==================================================
               // AVAILABLE
               // ==================================================
               Expanded(
                 child: _buildStat(
-                  title: 'Available',
+                  title: 'Available items',
                   value: availableItems.toString(),
-                  icon: Icons.check_circle_outline_rounded,
+                  // icon: Icons.check_circle_outline_rounded,
                 ),
               ),
 
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
 
               // ==================================================
               // UNAVAILABLE
               // ==================================================
               Expanded(
                 child: _buildStat(
-                  title: 'Out',
+                  title: 'Out of Stock',
                   value: unavailableItems.toString(),
-                  icon: Icons.remove_circle_outline_rounded,
+                  // icon: Icons.remove_circle_outline_rounded,
                 ),
               ),
             ],
@@ -145,19 +145,19 @@ class MenuHeader extends StatelessWidget {
   Widget _buildStat({
     required String title,
     required String value,
-    required IconData icon,
+    // required IconData icon,
   }) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 116),
+      // constraints: const BoxConstraints(minHeight: 116),
 
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
 
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.14),
+        color: AppColors.primary,
 
         borderRadius: BorderRadius.circular(18),
 
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+        // border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
 
       child: Column(
@@ -166,19 +166,19 @@ class MenuHeader extends StatelessWidget {
           // ======================================================
           // ICON
           // ======================================================
-          Container(
-            width: 34,
-            height: 34,
+          // Container(
+          //   width: 34,
+          //   height: 34,
 
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
-            ),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white.withValues(alpha: 0.15),
+          //     borderRadius: BorderRadius.circular(10),
+          //   ),
 
-            child: Icon(icon, color: Colors.white, size: 18),
-          ),
+          //   child: Icon(icon, color: Colors.white, size: 18),
+          // ),
 
-          const SizedBox(height: 10),
+          // const SizedBox(height: 10),
 
           // ======================================================
           // VALUE
@@ -188,7 +188,7 @@ class MenuHeader extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.title.copyWith(
-              color: Colors.white,
+              color: AppColors.white,
               fontSize: 21,
             ),
           ),
@@ -204,7 +204,8 @@ class MenuHeader extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: AppTextStyles.small.copyWith(
-              color: Colors.white.withValues(alpha: 0.75),
+              color: AppColors.white,
+              fontSize: 14
             ),
           ),
         ],

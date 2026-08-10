@@ -158,7 +158,9 @@ class _OrderPageState extends ConsumerState<OrderPage>
             return OrderCard(
               order: order,
               isUpdating: orderState.updatingOrderId == order.id,
-              onTap: () => context.push('/orders/${order.id}/status'),
+              onTap: () {
+                context.push('/orders/${order.id}');
+              },
               onMarkDone: () async {
                 await notifier.updateOrderStatus(
                   orderId: order.id,

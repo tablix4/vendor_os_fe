@@ -404,7 +404,7 @@ class DashboardPage extends ConsumerWidget {
                     if (dashboard.recentOrders.isEmpty)
                       _buildEmptyOrders(context)
                     else
-                      ...dashboard.recentOrders.map((order) {
+                      ...dashboard.recentOrders.take(5).map((order) {
                         final shortOrderId = order.id.length > 5
                             ? order.id
                                   .substring(order.id.length - 5)
@@ -416,7 +416,7 @@ class DashboardPage extends ConsumerWidget {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(18),
                             onTap: () {
-                              context.push('/orders');
+                              context.push('/orders/${order.id}');
                             },
                             child: RecentOrderTile(
                               orderNo: '#$shortOrderId',

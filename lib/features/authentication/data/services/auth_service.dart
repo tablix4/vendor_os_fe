@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_hr/core/network/api_client.dart';
-import 'package:my_hr/features/authentication/data/models/logout_response.dart';
-import 'package:my_hr/features/authentication/data/models/refresh_token_request.dart';
-import 'package:my_hr/features/authentication/data/models/refresh_token_response.dart';
+import 'package:tablix/core/network/api_client.dart';
+import 'package:tablix/features/authentication/data/models/logout_response.dart';
+import 'package:tablix/features/authentication/data/models/refresh_token_request.dart';
+import 'package:tablix/features/authentication/data/models/refresh_token_response.dart';
 
 import '../models/verify_otp_request.dart';
 import '../models/verify_otp_response.dart';

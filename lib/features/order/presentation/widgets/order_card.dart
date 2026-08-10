@@ -28,9 +28,7 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canCancel =
-        order.status == OrderStatus.pending ||
-        order.status == OrderStatus.accepted;
+    final canCancel = order.status == OrderStatus.pending;
 
     final canMarkDone =
         order.status != OrderStatus.completed &&
@@ -57,14 +55,24 @@ class OrderCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      order.customerName?.isNotEmpty == true
-                          ? order.customerName!
-                          : 'Walk-in Customer',
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.receipt_long_outlined, size: 20),
+
+                        const SizedBox(width: 8),
+
+                        Expanded(
+                          child: Text(
+                            'Order #${order.id.length > 5 ? order.id.substring(order.id.length - 5).toUpperCase() : order.id.toUpperCase()}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 

@@ -19,6 +19,7 @@ class RecentOrderTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPending = status == OrderStatus.pending;
+    final isCancelled = status == OrderStatus.cancelled;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
@@ -84,13 +85,19 @@ class RecentOrderTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isPending
                       ? Colors.orange.shade100
+                      : isCancelled
+                      ? const Color(0xFFFFEAEA)
                       : Colors.green.shade100,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
                   status.displayName,
                   style: TextStyle(
-                    color: isPending ? Colors.orange.shade800 : Colors.green,
+                    color: isPending
+                        ? Colors.orange.shade800
+                        : isCancelled
+                        ? const Color(0xFFDC2626)
+                        : Colors.green,
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                   ),

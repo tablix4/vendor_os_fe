@@ -32,7 +32,7 @@ class _OrderPageState extends ConsumerState<OrderPage>
   void initState() {
     super.initState();
 
-    _tabController = TabController(length: 7, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
@@ -51,22 +51,10 @@ class _OrderPageState extends ConsumerState<OrderPage>
           break;
 
         case 2:
-          notifier.filterStatus(OrderStatus.accepted.apiValue);
-          break;
-
-        case 3:
-          notifier.filterStatus(OrderStatus.preparing.apiValue);
-          break;
-
-        case 4:
-          notifier.filterStatus(OrderStatus.ready.apiValue);
-          break;
-
-        case 5:
           notifier.filterStatus(OrderStatus.completed.apiValue);
           break;
 
-        case 6:
+        case 3:
           notifier.filterStatus(OrderStatus.cancelled.apiValue);
           break;
       }
@@ -367,14 +355,14 @@ class _OrderPageState extends ConsumerState<OrderPage>
 
         bottom: TabBar(
           controller: _tabController,
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
+          isScrollable: false,
+          tabAlignment: TabAlignment.center,
           tabs: const [
             Tab(text: 'All'),
             Tab(text: 'Pending'),
-            Tab(text: 'Accepted'),
-            Tab(text: 'Preparing'),
-            Tab(text: 'Ready'),
+            // Tab(text: 'Accepted'),
+            // Tab(text: 'Preparing'),
+            // Tab(text: 'Ready'),
             Tab(text: 'Completed'),
             Tab(text: 'Cancelled'),
           ],

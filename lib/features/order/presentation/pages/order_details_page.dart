@@ -345,15 +345,9 @@ class _OrderDetailsContent extends StatelessWidget {
     // STATUS RULES
     // ----------------------------------------------------------
 
-    final canCancel =
-        order.status == OrderStatus.pending ||
-        order.status == OrderStatus.accepted;
+    final canCancel = order.status == OrderStatus.pending;
 
-    final canMarkDone =
-        order.status == OrderStatus.pending ||
-        order.status == OrderStatus.accepted ||
-        order.status == OrderStatus.preparing ||
-        order.status == OrderStatus.ready;
+    final canMarkDone = order.status == OrderStatus.pending;
 
     // ----------------------------------------------------------
     // CUSTOMER
@@ -634,10 +628,13 @@ class _OrderHeroCard extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  customerName,
+                  'Order #${order.id}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
 

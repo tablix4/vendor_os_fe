@@ -1,9 +1,13 @@
+import '../models/create_order_request.dart';
 import '../models/order_model.dart';
 import '../services/order_service.dart';
-import '../models/create_order_request.dart';
 
 class OrderRepository {
   final OrderService _service = OrderService();
+
+  // ============================================================
+  // GET ORDERS
+  // ============================================================
 
   Future<List<OrderModel>> getOrders({
     String? customerName,
@@ -21,9 +25,17 @@ class OrderRepository {
     );
   }
 
+  // ============================================================
+  // GET ORDER DETAILS
+  // ============================================================
+
   Future<OrderModel> getOrderById(String id) {
     return _service.getOrderById(id);
   }
+
+  // ============================================================
+  // UPDATE ORDER STATUS
+  // ============================================================
 
   Future<void> updateOrderStatus({
     required String orderId,
@@ -32,7 +44,19 @@ class OrderRepository {
     return _service.updateOrderStatus(orderId: orderId, status: status);
   }
 
+  // ============================================================
+  // CREATE ORDER
+  // ============================================================
+
   Future<void> createOrder(CreateOrderRequest request) {
     return _service.createOrder(request);
+  }
+
+  // ============================================================
+  // CANCEL ORDER
+  // ============================================================
+
+  Future<void> cancelOrder(String orderId) {
+    return _service.cancelOrder(orderId);
   }
 }

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tablix/core/theme/app_colors.dart';
+import 'package:tablix/core/theme/app_text_styles.dart';
 
 import '../../data/models/order_status.dart';
 
@@ -342,15 +344,28 @@ class _OrderPageState extends ConsumerState<OrderPage>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Orders'),
+        backgroundColor: AppColors.white,
+        // surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        // title: const Text('Orders'),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Orders',
+                style: AppTextStyles.heading.copyWith(fontSize: 24),
+              ),
+            ),
+          ],
+        ),
         centerTitle: false,
 
         actions: [
-          IconButton(
-            tooltip: 'Clear Filters',
-            onPressed: _clearAllFilters,
-            icon: const Icon(Icons.filter_alt_off_outlined),
-          ),
+          // IconButton(
+          //   tooltip: 'Clear Filters',
+          //   onPressed: _clearAllFilters,
+          //   icon: const Icon(Icons.filter_alt_off_outlined),
+          // ),
         ],
 
         bottom: TabBar(

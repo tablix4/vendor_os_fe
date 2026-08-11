@@ -232,8 +232,10 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
 
         title: Text(
           'Order Details',
-          style: AppTextStyles.subtitle.copyWith(fontSize: 19),
+          style: AppTextStyles.heading.copyWith(fontSize: 24),
         ),
+
+        titleSpacing: 0,
 
         centerTitle: false,
       ),
@@ -396,7 +398,7 @@ class _OrderDetailsContent extends StatelessWidget {
           // CUSTOMER
           // ==================================================
           const _SectionHeader(
-            title: 'Customer',
+            title: 'Customer details',
             icon: Icons.person_outline_rounded,
           ),
 
@@ -530,6 +532,9 @@ class _OrderHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPending = order.status == OrderStatus.pending;
+    final isCancelled = order.status == OrderStatus.cancelled;
+
     return Container(
       width: double.infinity,
 
@@ -538,10 +543,12 @@ class _OrderHeroCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadius.xl),
 
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppColors.black, Color(0xff1E293B)],
+          // colors: [AppColors.primary, Color(0xff1E293B)],
+          colors: [ isPending ? Colors.orange : isCancelled ? Colors.red : AppColors.primary, 
+          const Color(0xff1E293B)],
         ),
 
         boxShadow: [
@@ -567,7 +574,7 @@ class _OrderHeroCard extends StatelessWidget {
                 height: 46,
 
                 decoration: BoxDecoration(
-                  color: AppColors.white.withValues(alpha: 0.10),
+                  color: AppColors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
 
@@ -578,8 +585,22 @@ class _OrderHeroCard extends StatelessWidget {
                 ),
               ),
 
-              const Spacer(),
+              const SizedBox(width: 8),
 
+              Expanded(
+                child: Text(
+                  '#${order.id.length > 5 ? order.id.substring(order.id.length - 5).toUpperCase() : order.id.toUpperCase()}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              // const Spacer(),
               _HeroStatus(status: order.status),
             ],
           ),
@@ -618,54 +639,66 @@ class _OrderHeroCard extends StatelessWidget {
           // ==================================================
           Row(
             children: [
-              const Icon(
-                Icons.person_outline_rounded,
-                size: 17,
-                color: Colors.white70,
-              ),
+              // const Icon(
+              //   Icons.person_outline_rounded,
+              //   size: 17,
+              //   color: Colors.white70,
+              // ),
 
-              const SizedBox(width: 6),
+              // const SizedBox(width: 6),
 
-              Expanded(
-                child: Text(
-                  'Order #${order.id}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              // Expanded(
+              //   child: Text(
+              //     'Order #${order.id}',
+              //     maxLines: 1,
+              //     overflow: TextOverflow.ellipsis,
+              //     style: AppTextStyles.bodyMedium.copyWith(
+              //       color: Colors.white,
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
 
-              const SizedBox(width: AppSpacing.md),
+              // const SizedBox(width: AppSpacing.md),
+              const Spacer(),
 
               const Icon(
                 Icons.schedule_rounded,
-                size: 17,
+                size: 14,
                 color: Colors.white70,
               ),
 
               const SizedBox(width: 6),
 
               Text(
+                formattedDate,
+                style: AppTextStyles.small.copyWith(
+                  color: Colors.white.withValues(alpha: 0.70),
+                ),
+              ),
+
+              const SizedBox(width: 6),
+
+              Text(
                 formattedTime,
-                style: AppTextStyles.small.copyWith(color: Colors.white),
+                style: AppTextStyles.small.copyWith(
+                  color: Colors.white.withValues(alpha: 0.70),
+                ),
               ),
             ],
           ),
 
-          const SizedBox(height: AppSpacing.xs),
+          // const SizedBox(height: AppSpacing.xs),
 
-          Padding(
-            padding: const EdgeInsets.only(left: 23),
-            child: Text(
-              formattedDate,
-              style: AppTextStyles.small.copyWith(
-                color: Colors.white.withValues(alpha: 0.60),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 23),
+          //   child: Text(
+          //     formattedDate,
+          //     style: AppTextStyles.small.copyWith(
+          //       color: Colors.white.withValues(alpha: 0.60),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -697,7 +730,8 @@ class _HeroStatus extends StatelessWidget {
       foregroundColor = const Color(0xff4ADE80);
     }
 
-    final backgroundColor = foregroundColor.withValues(alpha: 0.16);
+    // final backgroundColor = foregroundColor.withValues(alpha: 0.16);
+    final backgroundColor = AppColors.black.withValues(alpha: 0.5);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -927,7 +961,8 @@ class _OrderItemCard extends StatelessWidget {
             alignment: Alignment.center,
 
             child: Text(
-              '${index + 1}',
+              // '${index + 1}',
+              'x${item.quantity}',
               style: AppTextStyles.bodySemiBold.copyWith(
                 color: AppColors.primary,
               ),
@@ -961,23 +996,23 @@ class _OrderItemCard extends StatelessWidget {
 
                     const SizedBox(width: 8),
 
-                    Container(
-                      width: 4,
-                      height: 4,
-                      decoration: const BoxDecoration(
-                        color: AppColors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
+                    // Container(
+                    //   width: 4,
+                    //   height: 4,
+                    //   decoration: const BoxDecoration(
+                    //     color: AppColors.grey,
+                    //     shape: BoxShape.circle,
+                    //   ),
+                    // ),
 
-                    const SizedBox(width: 8),
+                    // const SizedBox(width: 8),
 
-                    Text(
-                      'Qty ${item.quantity}',
-                      style: AppTextStyles.caption.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    // Text(
+                    //   'Qty ${item.quantity}',
+                    //   style: AppTextStyles.caption.copyWith(
+                    //     fontWeight: FontWeight.w500,
+                    //   ),
+                    // ),
                   ],
                 ),
               ],
@@ -1159,46 +1194,35 @@ class _CompleteOrderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sm),
+    return FilledButton.icon(
+      onPressed: isUpdating ? null : onPressed,
 
-      decoration: BoxDecoration(
-        // color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        // border: Border.all(color: AppColors.primary.withValues(alpha: 0.14)),
+      style: FilledButton.styleFrom(
+        minimumSize: const Size.fromHeight(56),
+
+        backgroundColor: AppColors.primary,
+
+        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.55),
+
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
       ),
 
-      child: FilledButton.icon(
-        onPressed: isUpdating ? null : onPressed,
+      icon: isUpdating
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
+          : const Icon(Icons.check_circle_outline_rounded),
 
-        style: FilledButton.styleFrom(
-          minimumSize: const Size.fromHeight(56),
-
-          backgroundColor: AppColors.primary,
-
-          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.55),
-
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-        ),
-
-        icon: isUpdating
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : const Icon(Icons.check_circle_outline_rounded),
-
-        label: Text(
-          isUpdating ? 'Updating Order...' : 'Mark as Completed',
-
-          style: AppTextStyles.button.copyWith(color: Colors.white),
-        ),
+      label: Text(
+        isUpdating ? 'Updating Order...' : 'Complete',
+        style: AppTextStyles.button.copyWith(color: Colors.white),
       ),
     );
   }
@@ -1236,7 +1260,7 @@ class _CancelOrderButton extends StatelessWidget {
 
       icon: const Icon(Icons.close_rounded),
 
-      label: const Text('Cancel Order'),
+      label: const Text('Cancel'),
     );
   }
 }

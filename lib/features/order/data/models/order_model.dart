@@ -29,7 +29,7 @@ class OrderModel {
           ? 0
           : double.tryParse(json['total'].toString()) ?? 0,
       status: OrderStatusExtension.fromApi(json['status']),
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: DateTime.parse(json['createdAt']).toLocal(),
       items: (json['items'] as List<dynamic>? ?? [])
           .map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
           .toList(),

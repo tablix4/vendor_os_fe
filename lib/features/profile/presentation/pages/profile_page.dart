@@ -216,8 +216,7 @@ class _ProfilePageState
         children: [
           Text(
             'Profile',
-            style:
-                AppTextStyles.title,
+            style: AppTextStyles.heading.copyWith(fontSize: 24),
           ),
 
           const SizedBox(

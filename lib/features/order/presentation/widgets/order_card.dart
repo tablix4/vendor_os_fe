@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+// import 'package:tablix/core/theme/app_colors.dart';
 
 import '../../data/models/order_model.dart';
 import '../../data/models/order_status.dart';
@@ -34,12 +35,17 @@ class OrderCard extends StatelessWidget {
         order.status != OrderStatus.completed &&
         order.status != OrderStatus.cancelled;
 
+    // final isPending = order.status == OrderStatus.pending;
+    // final isCancelled = order.status == OrderStatus.cancelled;
+
     return Card(
       elevation: 0,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      // color: isPending ? Colors.orange.shade50 : isCancelled ? Colors.red.shade50 : Colors.green.shade50,
+      color: Colors.grey.shade50,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: BorderSide(color: Colors.grey.shade300),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -170,10 +176,10 @@ class OrderCard extends StatelessWidget {
                         onPressed: isUpdating ? null : onCancel,
                         style: OutlinedButton.styleFrom(
                           foregroundColor: const Color(0xFFDC2626),
-                          side: const BorderSide(color: Color(0xFFFCA5A5)),
+                          side: const BorderSide(color: Color(0xFFDC2626)),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         icon: const Icon(Icons.close_rounded, size: 18),
@@ -192,12 +198,12 @@ class OrderCard extends StatelessWidget {
 
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF1F2),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFFFECACA)),
-                  ),
+                  padding: const EdgeInsets.all(0),
+                  // decoration: BoxDecoration(
+                  //   color: const Color(0xFFFFF1F2),
+                  //   borderRadius: BorderRadius.circular(12),
+                  //   border: Border.all(color: const Color(0xFFFECACA)),
+                  // ),
                   child: const Row(
                     children: [
                       Icon(

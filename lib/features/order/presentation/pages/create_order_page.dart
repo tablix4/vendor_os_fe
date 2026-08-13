@@ -308,11 +308,11 @@ class _CreateOrderPageState extends ConsumerState<CreateOrderPage> {
             // HEADER
             // ==================================================
             const Padding(
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: CreateOrderHeader(),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
 
             // ==================================================
             // SEARCH
